@@ -21,10 +21,11 @@ func NewPackageSymbols(pkg *packages.Package) *Package {
 	}
 }
 
-func NewGlobalSymbols() *Global {
+func NewGlobalSymbols(composer symbols.Composer) *Global {
 	return &Global{
 		symbols:    map[newtypes.PackageID]*Package{},
 		pkgSymbols: map[newtypes.PackageID]string{},
+		composer:   composer,
 	}
 }
 
@@ -75,6 +76,11 @@ type Global struct {
 	m          sync.Mutex
 	symbols    map[newtypes.PackageID]*Package
 	pkgSymbols map[newtypes.PackageID]string
+	composer   symbols.Composer
+}
+
+func (p *Global) Composer() symbols.Composer {
+	return p.composer
 }
 
 func (p *Global) Add(pkgSymbols *Package) {
@@ -90,6 +96,7 @@ func (p *Global) SetPkgSymbol(pkg *packages.Package) string {
 	})
 	p.m.Lock()
 	p.pkgSymbols[newtypes.GetID(pkg)] = sym
+	p.symbols[newtypes.GetID(pkg)] = NewPackageSymbols(pkg)
 	p.m.Unlock()
 	return sym
 }
@@ -168,6 +175,12 @@ func (p *Global) GetSymbolOfObject(obj types.Object) (*scip.SymbolInformation, b
 		symbol, _, ok := p.getSymbolInformationByPath(combination, obj.Pos())
 		if ok {
 			return symbol, true, nil
+		}
+	}
+
+	if pkgSymbols, ok := p.symbols[newtypes.PackageID(pkgPath)]; ok {
+		if sym := p.composer.Compose(pkgSymbols.pkg, obj); sym != "" {
+			return &scip.SymbolInformation{Symbol: sym}, true, nil
 		}
 	}
 

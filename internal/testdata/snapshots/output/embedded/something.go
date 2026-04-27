@@ -17,9 +17,7 @@
 //                                         display_name String
 //                                         signature_documentation
 //                                         > func (*RecentCommittersResults).String() string
-//                                         relationship github.com/golang/go/src go1.22 context/stringer#String. implementation
-//                                         relationship github.com/golang/go/src go1.22 fmt/Stringer#String. implementation
-//                                         relationship github.com/golang/go/src go1.22 runtime/stringer#String. implementation
+//                                         relationship github.com/golang/go/src go1.22 fmt/Stringer#String(). implementation
    return fmt.Sprintf("RecentCommittersResults{Nodes: %d}", len(r.Nodes))
 //        ^^^ reference github.com/golang/go/src go1.22 fmt/
 //            ^^^^^^^ reference github.com/golang/go/src go1.22 fmt/Sprintf().
@@ -47,9 +45,7 @@
 //                             >     }
 //                             >     PageInfo struct{ HasNextPage bool }
 //                             > }
-//                             relationship github.com/golang/go/src go1.22 context/stringer# implementation
 //                             relationship github.com/golang/go/src go1.22 fmt/Stringer# implementation
-//                             relationship github.com/golang/go/src go1.22 runtime/stringer# implementation
    Nodes []struct {
 // ^^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#Nodes.
 //       kind Field

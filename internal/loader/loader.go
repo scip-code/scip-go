@@ -19,7 +19,7 @@ import (
 
 type PackageLookup map[newtypes.PackageID]*packages.Package
 
-var loadMode = packages.NeedDeps |
+var loadMode = packages.NeedExportFile |
 	packages.NeedImports |
 	packages.NeedSyntax |
 	packages.NeedTypes |
@@ -119,7 +119,7 @@ func LoadPackages(
 
 		for _, pkg := range pkgs {
 			addImportsToPkgs(allPackages, &opts, pkg)
-			projectPackages[newtypes.GetID(pkg)] = pkg
+			projectPackages[newtypes.GetID(pkg)] = allPackages[newtypes.GetID(pkg)]
 		}
 
 		return nil

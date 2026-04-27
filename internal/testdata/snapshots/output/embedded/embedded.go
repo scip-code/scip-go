@@ -18,9 +18,7 @@
 //                   display_name osExecCommand
 //                   signature_documentation
 //                   > type osExecCommand struct{ *exec.Cmd }
-//                   relationship github.com/golang/go/src go1.22 context/stringer# implementation
 //                   relationship github.com/golang/go/src go1.22 fmt/Stringer# implementation
-//                   relationship github.com/golang/go/src go1.22 runtime/stringer# implementation
    *exec.Cmd
 //  ^^^^ reference github.com/golang/go/src go1.22 `os/exec`/
 //       ^^^ definition 0.1.test `sg/embedded`/osExecCommand#Cmd.

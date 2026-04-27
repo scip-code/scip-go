@@ -1,21 +1,15 @@
 package impls
 
 import (
-	"fmt"
-	"go/ast"
 	"go/types"
 	"hash/crc32"
-	"log/slog"
 	"sync"
 	"sync/atomic"
 
 	"github.com/scip-code/scip-go/internal/implementations/fingerprint"
 	"github.com/scip-code/scip-go/internal/loader"
-	"github.com/scip-code/scip-go/internal/lookup"
 	"github.com/scip-code/scip-go/internal/output"
 	"github.com/scip-code/scip/bindings/go/scip"
-	"golang.org/x/tools/go/packages"
-	"golang.org/x/tools/go/types/typeutil"
 )
 
 // methodID is a unique identifier for a method, using types.Id semantics
@@ -23,11 +17,7 @@ import (
 type methodID string
 
 type ImplDef struct {
-	// The corresponding scip symbol, generated via previous iteration over the AST
-	Symbol *scip.SymbolInformation
-
-	Pkg     *packages.Package
-	Ident   *ast.Ident
+	Symbol  *scip.SymbolInformation
 	Named   *types.Named
 	Methods map[methodID]*scip.SymbolInformation
 
@@ -69,19 +59,9 @@ func hasUnexportedMethods(methods []*types.Selection) bool {
 	return false
 }
 
-func findImplementations(concreteTypes map[string]ImplDef, interfaces map[string]ImplDef, symbols *lookup.Global, count *uint64) {
+func findImplementations(concreteTypes map[string]ImplDef, interfaces map[string]ImplDef, count *uint64) {
 	for _, ty := range concreteTypes {
-		pos := ty.Ident.Pos()
-		sym, ok := symbols.GetSymbolInformation(ty.Pkg, pos)
-		if !ok {
-			panic(fmt.Sprintf("Could not find symbol for %s", ty.Symbol))
-		}
-
 		for _, iface := range interfaces {
-			if iface.Ident == nil {
-				continue
-			}
-
 			ifaceType, ok := iface.Named.Underlying().(*types.Interface)
 			if !ok {
 				continue
@@ -114,7 +94,7 @@ func findImplementations(concreteTypes map[string]ImplDef, interfaces map[string
 			}
 
 			// Add implementation details for the struct & interface relationship
-			sym.Relationships = append(sym.Relationships, &scip.Relationship{
+			ty.Symbol.Relationships = append(ty.Symbol.Relationships, &scip.Relationship{
 				Symbol:           iface.Symbol.Symbol,
 				IsImplementation: true,
 			})
@@ -133,6 +113,11 @@ func findImplementations(concreteTypes map[string]ImplDef, interfaces map[string
 			}
 		}
 
+		ty.Symbol.Relationships = scip.CanonicalizeRelationships(ty.Symbol.Relationships)
+		for _, method := range ty.Methods {
+			method.Relationships = scip.CanonicalizeRelationships(method.Relationships)
+		}
+
 		atomic.AddUint64(count, 1)
 	}
 }
@@ -140,16 +125,11 @@ func findImplementations(concreteTypes map[string]ImplDef, interfaces map[string
 func AddImplementationRelationships(
 	pkgs loader.PackageLookup,
 	allPackages loader.PackageLookup,
-	symbols *lookup.Global,
+	extractor Extractor,
 ) ([]*scip.SymbolInformation, error) {
 	var externalSymbols []*scip.SymbolInformation
 
-	var msCache typeutil.MethodSetCache
-	localInterfaces, localTypes, err := extractInterfacesAndConcreteTypes(
-		pkgs, symbols, &msCache)
-	if err != nil {
-		return nil, err
-	}
+	localInterfaces, localTypes := extractor.Extract(pkgs)
 
 	remotePackages := make(loader.PackageLookup)
 	for pkgID, pkg := range allPackages {
@@ -159,11 +139,7 @@ func AddImplementationRelationships(
 
 		remotePackages[pkgID] = pkg
 	}
-	remoteInterfaces, remoteTypes, err := extractInterfacesAndConcreteTypes(
-		remotePackages, symbols, &msCache)
-	if err != nil {
-		return nil, err
-	}
+	remoteInterfaces, remoteTypes := extractor.Extract(remotePackages)
 
 	// Total concrete types to check across the three passes.
 	total := uint64(len(localTypes)*2 + len(remoteTypes))
@@ -175,131 +151,24 @@ func AddImplementationRelationships(
 		defer wg.Done()
 
 		// local type -> local interface
-		findImplementations(localTypes, localInterfaces, symbols, &count)
+		findImplementations(localTypes, localInterfaces, &count)
 
 		// local type -> remote interface
-		findImplementations(localTypes, remoteInterfaces, symbols, &count)
+		findImplementations(localTypes, remoteInterfaces, &count)
 
 		// remote type -> local interface
 		// We emit these as external symbols so index consumer can merge them.
-		findImplementations(remoteTypes, localInterfaces, symbols, &count)
+		findImplementations(remoteTypes, localInterfaces, &count)
 	}()
 
 	output.WithProgressParallel(&wg, "Indexing Implementations", &count, total)
 
 	// Collect remote type symbols that gained relationships
 	for _, typ := range remoteTypes {
-		if sym, ok := symbols.GetSymbolInformation(typ.Pkg, typ.Ident.Pos()); ok {
-			if len(sym.Relationships) > 0 {
-				externalSymbols = append(externalSymbols, sym)
-			}
+		if len(typ.Symbol.Relationships) > 0 {
+			externalSymbols = append(externalSymbols, typ.Symbol)
 		}
 	}
 
 	return externalSymbols, nil
-}
-
-func extractInterfacesAndConcreteTypes(
-	pkgs loader.PackageLookup,
-	symbols *lookup.Global,
-	msCache *typeutil.MethodSetCache,
-) (interfaces map[string]ImplDef, concreteTypes map[string]ImplDef, err error) {
-	interfaces = map[string]ImplDef{}
-	concreteTypes = map[string]ImplDef{}
-
-	for _, pkg := range pkgs {
-		// Builtin isn't the same as standard library, that is for builtin types
-		// We don't need to check those for implemenations.
-		if pkg.Name == "builtin" {
-			continue
-		}
-
-		if pkg.TypesInfo == nil {
-			slog.Warn("No types for package", "path", pkg.PkgPath)
-			continue
-		}
-
-		pkgSymbols := symbols.GetPackage(pkg)
-		if pkgSymbols == nil {
-			slog.Warn("No symbols for package", "path", pkg.PkgPath)
-			continue
-		}
-
-		for ident, obj := range pkg.TypesInfo.Defs {
-			if obj == nil {
-				continue
-			}
-
-			// We ignore aliases 'type M = N' to avoid duplicate reporting
-			// of the Named type N.
-			obj, ok := obj.(*types.TypeName)
-			if !ok {
-				continue
-			}
-
-			// Skip types declared inside function bodies — the type visitor
-			// only indexes package-level declarations, so local types will
-			// never have a symbol entry.
-			if pkg.Types != nil && obj.Parent() != pkg.Types.Scope() {
-				continue
-			}
-
-			objType, ok := obj.Type().(*types.Named)
-			if !ok {
-				continue
-			}
-
-			symbol, ok := pkgSymbols.Get(obj.Pos())
-			if !ok {
-				slog.Debug(
-					"No symbol for package-level named type",
-					"identifier", ident.Name, "package", pkg.PkgPath, "id", obj.Id())
-				continue
-			}
-
-			methods := typeutil.IntuitiveMethodSet(objType, msCache)
-
-			// ignore interfaces that are empty. they are too
-			// plentiful and don't provide useful intelligence.
-			if len(methods) == 0 {
-				continue
-			}
-
-			methodIds := map[methodID]*scip.SymbolInformation{}
-			for _, m := range methods {
-				sym, ok, err := symbols.GetSymbolOfObject(m.Obj())
-				if err != nil {
-					slog.Debug(fmt.Sprintf("Error while looking for symbol %s | %s", err, m.Obj()))
-					continue
-				}
-
-				if !ok {
-					continue
-				}
-
-				methodIds[methodID(m.Obj().Id())] = sym
-			}
-
-			d := ImplDef{
-				Symbol:        symbol,
-				Pkg:           pkg,
-				Ident:         ident,
-				Named:         objType,
-				Methods:       methodIds,
-				Mask:          methodMask(methods),
-				MethodCount:   len(methods),
-				HasUnexported: hasUnexportedMethods(methods),
-				PkgPath:       pkg.PkgPath,
-			}
-
-			if types.IsInterface(objType) {
-				interfaces[d.Symbol.Symbol] = d
-			} else {
-				concreteTypes[d.Symbol.Symbol] = d
-			}
-
-		}
-	}
-
-	return
 }

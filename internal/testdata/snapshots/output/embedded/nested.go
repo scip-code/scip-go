@@ -50,10 +50,10 @@
    _ = n.Handler.ServeHTTP
 //     ^ reference local 0
 //       ^^^^^^^ reference 0.1.test `sg/embedded`/NestedHandler#Handler.
-//               ^^^^^^^^^ reference github.com/golang/go/src go1.22 `net/http`/Handler#ServeHTTP.
+//               ^^^^^^^^^ reference github.com/golang/go/src go1.22 `net/http`/Handler#ServeHTTP().
    _ = n.ServeHTTP
 //     ^ reference local 0
-//       ^^^^^^^^^ reference github.com/golang/go/src go1.22 `net/http`/Handler#ServeHTTP.
+//       ^^^^^^^^^ reference github.com/golang/go/src go1.22 `net/http`/Handler#ServeHTTP().
    _ = n.Other
 //     ^ reference local 0
 //       ^^^^^ reference 0.1.test `sg/embedded`/NestedHandler#Other.

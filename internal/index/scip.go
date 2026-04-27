@@ -55,15 +55,21 @@ func GetPackages(opts config.IndexOpts) (current []newtypes.PackageID, deps []ne
 }
 
 func ListMissing(opts config.IndexOpts) (missing []string, err error) {
-	projectPackages, allPackages, err := loader.LoadPackages(opts, opts.ModuleRoot)
+	projectPackages, _, err := loader.LoadPackages(opts, opts.ModuleRoot)
 	if err != nil {
 		return nil, err
 	}
 
+	composer := symbols.NewComposer(symbols.ComposerConfig{
+		DefaultModulePath:    opts.ModuleRoot,
+		DefaultModuleVersion: opts.ModuleVersion,
+	})
+	globalSymbols := lookup.NewGlobalSymbols(composer)
+
 	pathToDocuments := map[string]*document.Document{}
-	for _, pkg := range allPackages {
+	for _, pkg := range projectPackages {
 		visitors.VisitPackageSyntax(
-			opts.ModuleRoot, pkg, pathToDocuments, lookup.NewGlobalSymbols())
+			opts.ModuleRoot, pkg, pathToDocuments, globalSymbols)
 	}
 
 	for _, pkg := range projectPackages {
@@ -104,7 +110,7 @@ func Index(writer func(proto.Message) error, opts config.IndexOpts) error {
 	pathToDocument, globalSymbols := indexVisitPackages(opts, projectPackages, allPackages)
 	if !opts.SkipImplementations {
 		implSymbols, err := impls.AddImplementationRelationships(
-			projectPackages, allPackages, globalSymbols,
+			projectPackages, allPackages, impls.NewExtractor(globalSymbols),
 		)
 		if err != nil {
 			return err
@@ -180,39 +186,33 @@ func indexVisitPackages(
 	allPackages loader.PackageLookup,
 ) (map[string]*document.Document, *lookup.Global) {
 	pathToDocuments := map[string]*document.Document{}
-	globalSymbols := lookup.NewGlobalSymbols()
+
+	composer := symbols.NewComposer(symbols.ComposerConfig{
+		DefaultModulePath:    opts.ModuleRoot,
+		DefaultModuleVersion: opts.ModuleVersion,
+	})
+	globalSymbols := lookup.NewGlobalSymbols(composer)
+	for _, pkg := range allPackages {
+		globalSymbols.SetPkgSymbol(pkg)
+	}
 
 	var count uint64
 	var wg sync.WaitGroup
 	wg.Add(1)
 
-	lookupIDs := slices.Sorted(maps.Keys(allPackages))
+	lookupIDs := slices.Sorted(maps.Keys(projectPackages))
 
-	// We have to visit all the packages to get the definition sites
-	// for all the symbols.
-	//
-	// We don't want to visit in the same depth as file visitors though,
-	// so we do ONLY do this
+	// Visit project packages to collect definition sites. Dependency packages
+	// skip syntax visiting; their symbols are composed on demand.
 	go func() {
 		defer wg.Done()
 
 		for _, pkgID := range lookupIDs {
-			pkg := allPackages[pkgID]
+			pkg := projectPackages[pkgID]
 			slog.Debug("Visiting package", "path", pkg.PkgPath)
 			visitors.VisitPackageSyntax(opts.ModuleRoot, pkg, pathToDocuments, globalSymbols)
 
-			pkgSymbol := globalSymbols.SetPkgSymbol(pkg)
-
-			// If we don't have this package anywhere, don't try to create a new symbol
-			if _, ok := projectPackages[newtypes.GetID(pkg)]; !ok {
-				atomic.AddUint64(&count, 1)
-				continue
-			}
-
-			if len(pkg.Syntax) == 0 {
-				atomic.AddUint64(&count, 1)
-				continue
-			}
+			pkgSymbol, _ := globalSymbols.GetPkgSymbol(pkg)
 
 			symInfo := &scip.SymbolInformation{
 				Symbol:        pkgSymbol,
