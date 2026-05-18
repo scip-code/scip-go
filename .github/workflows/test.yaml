@@ -40,6 +40,17 @@ jobs:
           summarize: false
       - uses: DeterminateSystems/magic-nix-cache-action@v13
       - run: nix build .#docker
+      - name: Index scip-go with docker image
+        run: |
+          image=$(docker load -i result | sed -n 's/Loaded image: //p')
+          echo "Loaded $image"
+          docker run --rm \
+            -v "$GITHUB_WORKSPACE:/work" \
+            "$image" \
+            scip-go -o /work/index.scip
+          size=$(stat --format='%s' index.scip)
+          echo "Index size: $size bytes"
+          [ "$size" -ge 1024 ] || { echo "FAIL: index too small"; exit 1; }
 
   index:
     needs: [build]
