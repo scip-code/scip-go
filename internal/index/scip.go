@@ -71,7 +71,11 @@ func ListMissing(opts config.IndexOpts) (missing []string, err error) {
 
 	for _, pkg := range projectPackages {
 		for _, f := range pkg.Syntax {
-			docName := pkg.Fset.File(f.Package).Name()
+			tf := pkg.Fset.File(f.Package)
+			if tf == nil {
+				continue
+			}
+			docName := tf.Name()
 			if _, ok := pathToDocuments[docName]; !ok {
 				missing = append(missing, docName)
 			}
@@ -131,7 +135,11 @@ func Index(writer func(proto.Message) error, opts config.IndexOpts) error {
 			pkgSymbols := globalSymbols.GetPackage(pkg)
 
 			for _, file := range pkg.Syntax {
-				doc := pathToDocument[pkg.Fset.File(file.Package).Name()]
+				tf := pkg.Fset.File(file.Package)
+				if tf == nil {
+					continue
+				}
+				doc := pathToDocument[tf.Name()]
 				if doc == nil {
 					continue
 				}
@@ -227,12 +235,34 @@ func indexVisitPackages(
 					Text:     "package " + pkg.Name,
 				},
 			}
-			firstFile := pkg.Syntax[0]
-			firstDoc := pathToDocuments[pkg.Fset.File(firstFile.Package).Name()]
-			firstDoc.SetSymbolInformation(firstFile.Name.NamePos, symInfo)
+			// Find the first syntax file that has a known position and a
+			// corresponding document, to attach the package symbol info to.
+			var firstDoc *document.Document
+			var firstFile *ast.File
+			for _, f := range pkg.Syntax {
+				tf := pkg.Fset.File(f.Package)
+				if tf == nil {
+					continue
+				}
+				if d := pathToDocuments[tf.Name()]; d != nil {
+					firstDoc = d
+					firstFile = f
+					break
+				}
+			}
+			if firstDoc != nil {
+				firstDoc.SetSymbolInformation(firstFile.Name.NamePos, symInfo)
+			}
 
 			for _, f := range pkg.Syntax {
-				doc := pathToDocuments[pkg.Fset.File(f.Package).Name()]
+				tf := pkg.Fset.File(f.Package)
+				if tf == nil {
+					continue
+				}
+				doc := pathToDocuments[tf.Name()]
+				if doc == nil {
+					continue
+				}
 				position := pkg.Fset.Position(f.Name.NamePos)
 
 				doc.PackageOccurrence = &scip.Occurrence{

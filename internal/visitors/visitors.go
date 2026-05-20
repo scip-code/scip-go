@@ -24,8 +24,13 @@ func VisitPackageSyntax(
 	pkgSymbols := lookup.NewPackageSymbols(pkg)
 	// Iterate over all the files, collect any global symbols
 	for _, f := range pkg.Syntax {
-
-		abs := pkg.Fset.File(f.Package).Name()
+		tf := pkg.Fset.File(f.Package)
+		if tf == nil {
+			slog.Debug("Skipping syntax file with unknown position",
+				"package", pkg.PkgPath)
+			continue
+		}
+		abs := tf.Name()
 		relative, _ := filepath.Rel(moduleRoot, abs)
 
 		doc := visitSyntax(pkg, pkgSymbols, f, relative)
