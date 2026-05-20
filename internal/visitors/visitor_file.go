@@ -225,6 +225,10 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 		// Emit Reference
 		ref := info.Uses[node]
 		if ref != nil {
+			if _, ok := ref.(*types.PkgName); ok {
+				return v
+			}
+
 			var (
 				symbol     string
 				deprecated bool
