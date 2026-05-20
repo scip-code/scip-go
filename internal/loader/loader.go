@@ -2,9 +2,11 @@ package loader
 
 import (
 	"fmt"
+	"go/ast"
 	"log/slog"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 
 	"github.com/scip-code/scip-go/internal/config"
@@ -69,6 +71,14 @@ func addImportsToPkgs(pkgLookup PackageLookup, opts *config.IndexOpts, pkg *pack
 	if gotPkg, ok := pkgLookup[newtypes.GetID(pkg)]; ok && len(pkg.Syntax) <= len(gotPkg.Syntax) {
 		return
 	}
+
+	// Drop syntax files that the parser couldn't recover a package position
+	// for (e.g. unparseable files in a directory with conflicting packages).
+	// They have no usable position in pkg.Fset, so any indexer call that does
+	// pkg.Fset.File(f.Package).Name() would panic on a nil *token.File.
+	pkg.Syntax = slices.DeleteFunc(pkg.Syntax, func(f *ast.File) bool {
+		return pkg.Fset == nil || pkg.Fset.File(f.Package) == nil
+	})
 
 	normalizePackage(opts, pkg)
 	pkgLookup[newtypes.GetID(pkg)] = pkg
