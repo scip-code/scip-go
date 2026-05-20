@@ -82,11 +82,8 @@
             bad=$(
               # Snapshot outputs are generated with modified
               # indentation for alignment with annotations.
-              # pr261's input intentionally keeps an "unused" import
-              # to reproduce a panic on a bare PkgName ident.
               find . -name '*.go' \
                 -not -path '*/testdata/snapshots/output/*' \
-                -not -path '*/testdata/snapshots/input/pr261/*' \
                 -exec ${pkgs.gotools}/bin/goimports -l {} +
             )
             if [ -n "$bad" ]; then
