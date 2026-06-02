@@ -107,7 +107,7 @@ func (d *Document) SetNewSymbolForPos(
 ) {
 	var displayName string
 	var documentation []string
-	var sigDoc *scip.Document
+	var sigDoc *scip.Signature
 	var def types.Object
 
 	if ident != nil {
@@ -116,7 +116,7 @@ func (d *Document) SetNewSymbolForPos(
 		def = d.pkg.TypesInfo.Defs[ident]
 		if def != nil {
 			if signature := typeStringForObject(def); signature != "" {
-				sigDoc = &scip.Document{
+				sigDoc = &scip.Signature{
 					Language: "go",
 					Text:     signature,
 				}
