@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/alecthomas/kong v1.15.0
-	github.com/scip-code/scip/bindings/go/scip v0.7.1
+	github.com/scip-code/scip/bindings/go/scip v0.8.0
 	golang.org/x/mod v0.36.0
 	golang.org/x/tools v0.45.0
 	golang.org/x/tools/go/vcs v0.1.0-deprecated
@@ -13,7 +13,7 @@ require (
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/fatih/color v1.18.0 // indirect
+	github.com/fatih/color v1.19.0 // indirect
 	github.com/hexops/gotextdiff v1.0.3 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
