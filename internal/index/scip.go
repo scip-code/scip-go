@@ -222,7 +222,7 @@ func indexVisitPackages(
 				Kind:          scip.SymbolInformation_Package,
 				DisplayName:   pkg.Name,
 				Documentation: findPackageDocs(pkg),
-				SignatureDocumentation: &scip.Document{
+				SignatureDocumentation: &scip.Signature{
 					Language: "go",
 					Text:     "package " + pkg.Name,
 				},

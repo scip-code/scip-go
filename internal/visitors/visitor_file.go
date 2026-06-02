@@ -345,7 +345,7 @@ func (v *fileVisitor) ToScipDocument() *scip.Document {
 			// type recorded in caseClauses nondeterministic.
 			if _, isTypeSwitchLocal := v.caseClauses[obj.Pos()]; !isTypeSwitchLocal {
 				if txt := local.SignatureText(); txt != "" {
-					symbolInfo.SignatureDocumentation = &scip.Document{
+					symbolInfo.SignatureDocumentation = &scip.Signature{
 						Language: "go",
 						Text:     txt,
 					}
