@@ -32,6 +32,8 @@ github.com/scip-code/scip/bindings/go/scip v0.7.1 h1:x2QVP2nO09TFUGVrNJ+8XakD45K
 github.com/scip-code/scip/bindings/go/scip v0.7.1/go.mod h1:XC4dP3um0lKaSDRFIMwYlkBjFxKy1Rw7xFt6KDtRjAk=
 github.com/scip-code/scip/bindings/go/scip v0.8.0 h1:WdmhYzDbzgCe8D1PhS61VtFsa+/w+MUAv1Hs7kon0Mo=
 github.com/scip-code/scip/bindings/go/scip v0.8.0/go.mod h1:QhuSgP19HyWJIU/bvfBGn/RmkL/BX2IPoZWTNQ9M5wY=
+github.com/scip-code/scip/bindings/go/scip v0.8.1 h1:ZkyT9RDgkbd6ffvMbi9nYdwh7+gLoz8Z9ftFMxgUiVs=
+github.com/scip-code/scip/bindings/go/scip v0.8.1/go.mod h1:QhuSgP19HyWJIU/bvfBGn/RmkL/BX2IPoZWTNQ9M5wY=
 github.com/sourcegraph/beaut v0.0.0-20240611013027-627e4c25335a h1:j/CQ27s679M9wRGBRJYyXGrfkYuQA6VMnD7R08mHD9c=
 github.com/sourcegraph/beaut v0.0.0-20240611013027-627e4c25335a/go.mod h1:JG1sdvGTKWwe/oH3/3UKQ26vfcHIN//7fwEJhoqaBcM=
 github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
