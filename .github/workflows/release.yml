@@ -2,39 +2,46 @@ name: release
 
 on:
   workflow_dispatch:
-    inputs:
-      version:
-        description: "Version to release (e.g. 1.2.3, without v prefix)"
-        required: true
-        type: string
+  push:
+    branches: [main]
+    paths:
+      - internal/index/version.txt
 
 jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.resolve.outputs.version }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: main
+      - id: resolve
+        run: |
+          # tr strips CRLF, trailing whitespace, blank lines, etc.
+          VERSION=$(tr -d '[:space:]' < internal/index/version.txt)
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::internal/index/version.txt ($VERSION) must be MAJOR.MINOR.PATCH"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
   tag:
+    needs: setup
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      version: ${{ needs.setup.outputs.version }}
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
-      - name: Validate inputs
-        env:
-          NEW_VERSION: ${{ inputs.version }}
-        run: |
-          if ! echo "$NEW_VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "error: version '$NEW_VERSION' does not match semantic versioning (expected X.Y.Z)"
-            exit 1
-          fi
-          VERSION_FILE_PATH="internal/index/version.txt"
-          if ! grep -q "$NEW_VERSION" "$VERSION_FILE_PATH"; then
-            echo "error: scip-go version in $VERSION_FILE_PATH doesn't match NEW_VERSION=$NEW_VERSION"
-            exit 1
-          fi
+          ref: main
 
       - name: Create and push tag
         env:
-          NEW_VERSION: ${{ inputs.version }}
+          NEW_VERSION: ${{ needs.setup.outputs.version }}
         run: |
           git tag "v$NEW_VERSION"
           git push origin "v$NEW_VERSION"
@@ -44,13 +51,15 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    outputs:
+      version: ${{ needs.tag.outputs.version }}
     steps:
       - uses: actions/checkout@v6
 
       - name: Create GitHub release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG: v${{ inputs.version }}
+          TAG: v${{ needs.tag.outputs.version }}
         run: |
           gh release create "$TAG" --title "scip-go $TAG" --generate-notes --draft --verify-tag
 
@@ -71,7 +80,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: v${{ inputs.version }}
+          ref: v${{ needs.create-release.outputs.version }}
       - uses: DeterminateSystems/nix-installer-action@v22
 
       - name: Build
@@ -87,7 +96,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release upload "v${{ inputs.version }}" \
+          gh release upload "v${{ needs.create-release.outputs.version }}" \
             "${{ matrix.asset }}.tar.gz" \
             "${{ matrix.asset }}.tar.gz.sha256" \
             --clobber
@@ -107,7 +116,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: v${{ inputs.version }}
+          ref: v${{ needs.create-release.outputs.version }}
       - uses: DeterminateSystems/nix-installer-action@v22
 
       - name: Log in to GitHub Container Registry
@@ -129,14 +138,14 @@ jobs:
           docker push "$ARCH_TAG"
 
   docker-manifest:
-    needs: docker
+    needs: [create-release, docker]
     runs-on: ubuntu-latest
     permissions:
       packages: write
     steps:
       - uses: actions/checkout@v6
         with:
-          ref: v${{ inputs.version }}
+          ref: v${{ needs.create-release.outputs.version }}
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v4
@@ -158,7 +167,7 @@ jobs:
           done
 
   publish-release:
-    needs: [binaries, docker-manifest]
+    needs: [create-release, binaries, docker-manifest]
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -167,4 +176,4 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release edit "v${{ inputs.version }}" --repo "${{ github.repository }}" --draft=false
+          gh release edit "v${{ needs.create-release.outputs.version }}" --repo "${{ github.repository }}" --draft=false
