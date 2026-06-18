@@ -13,7 +13,7 @@ jobs:
     outputs:
       version: ${{ steps.resolve.outputs.version }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: main
       - id: resolve
@@ -34,7 +34,7 @@ jobs:
     outputs:
       version: ${{ needs.setup.outputs.version }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           ref: main
@@ -54,7 +54,7 @@ jobs:
     outputs:
       version: ${{ needs.tag.outputs.version }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Create GitHub release
         env:
@@ -78,7 +78,7 @@ jobs:
             asset: scip-go-darwin-arm64
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: v${{ needs.create-release.outputs.version }}
       - uses: DeterminateSystems/nix-installer-action@v22
@@ -114,7 +114,7 @@ jobs:
             arch: arm64
     runs-on: ${{ matrix.runner }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: v${{ needs.create-release.outputs.version }}
       - uses: DeterminateSystems/nix-installer-action@v22
@@ -143,7 +143,7 @@ jobs:
     permissions:
       packages: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: v${{ needs.create-release.outputs.version }}
 
