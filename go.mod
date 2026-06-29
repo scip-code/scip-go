@@ -6,7 +6,7 @@ require (
 	github.com/alecthomas/kong v1.15.0
 	github.com/scip-code/scip/bindings/go/scip v0.8.1
 	golang.org/x/mod v0.37.0
-	golang.org/x/tools v0.46.0
+	golang.org/x/tools v0.47.0
 	golang.org/x/tools/go/vcs v0.1.0-deprecated
 	google.golang.org/protobuf v1.36.11
 )
