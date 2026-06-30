@@ -116,12 +116,9 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 		}
 
 		if node.Name != nil && node.Name.Name != "." && node.Name.Name != "_" {
-			rangeFromName := symbols.RangeFromName(
-				v.pkg.Fset.Position(node.Name.Pos()), node.Name.Name, false)
-			if rangeFromName != nil {
-				if sym, ok := v.globalSymbols.GetPkgSymbol(importedPackage); ok {
-					v.newReference(sym, rangeFromName, false)
-				}
+			if sym, ok := v.globalSymbols.GetPkgSymbol(importedPackage); ok {
+				v.newReference(sym, symbols.RangeFromName(
+					v.pkg.Fset.Position(node.Name.Pos()), node.Name.Name, false), false)
 			}
 		}
 
@@ -279,31 +276,27 @@ func (v *fileVisitor) emitImportReference(
 	position token.Position,
 	importedPackage *packages.Package,
 ) {
-	scipRange := symbols.RangeFromName(position, importedPackage.PkgPath, true)
-	if scipRange == nil {
-		slog.Debug(fmt.Sprintf("Missing symbol for package path: %s", importedPackage.ID))
-		return
-	}
-
 	sym, ok := globalSymbols.GetPkgSymbol(importedPackage)
 	if !ok {
 		slog.Debug(fmt.Sprintf("Missing symbol information for package: %s", importedPackage.ID))
 		return
 	}
 
-	v.newReference(sym, scipRange, false)
+	v.newReference(sym, symbols.RangeFromName(position, importedPackage.PkgPath, true), false)
 }
 
 // newDefinition emits a scip.Occurence ONLY. This will not emit a
 // new symbol. You must do that using DeclareNewSymbol[ForPos]
 func (v *fileVisitor) newDefinition(
-	symbol string, rng []int32, enclRng []int32, deprecated bool,
+	symbol string, rng scip.Range, enclRng *scip.Range, deprecated bool,
 ) {
 	occ := &scip.Occurrence{
-		Range:          rng,
-		Symbol:         symbol,
-		SymbolRoles:    int32(scip.SymbolRole_Definition),
-		EnclosingRange: enclRng,
+		TypedRange:  rng.AsTypedRange(),
+		Symbol:      symbol,
+		SymbolRoles: int32(scip.SymbolRole_Definition),
+	}
+	if enclRng != nil {
+		occ.TypedEnclosingRange = enclRng.AsTypedEnclosingRange()
 	}
 	if deprecated {
 		occ.Diagnostics = deprecatedDiagnostics()
@@ -312,10 +305,10 @@ func (v *fileVisitor) newDefinition(
 }
 
 func (v *fileVisitor) newReference(
-	symbol string, rng []int32, deprecated bool,
+	symbol string, rng scip.Range, deprecated bool,
 ) {
 	occ := &scip.Occurrence{
-		Range:       rng,
+		TypedRange:  rng.AsTypedRange(),
 		Symbol:      symbol,
 		SymbolRoles: int32(scip.SymbolRole_ReadAccess),
 	}
@@ -364,13 +357,14 @@ func (v *fileVisitor) ToScipDocument() *scip.Document {
 	}
 }
 
-func (v *fileVisitor) enclosingRange(n *ast.Ident) []int32 {
+func (v *fileVisitor) enclosingRange(n *ast.Ident) *scip.Range {
 	if v.currentFuncDecl == nil || v.currentFuncDecl.Name != n {
 		return nil
 	}
 	startPosition := v.pkg.Fset.Position(v.currentFuncDecl.Pos())
 	endPosition := v.pkg.Fset.Position(v.currentFuncDecl.End())
-	return scipRange(startPosition, endPosition, v.pkg.TypesInfo.Defs[n])
+	rng := scipRange(startPosition, endPosition, v.pkg.TypesInfo.Defs[n])
+	return &rng
 }
 
 func deprecatedDiagnostics() []*scip.Diagnostic {

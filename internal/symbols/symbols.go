@@ -24,7 +24,7 @@ func FromDescriptors(pkg *packages.Package, descriptors ...*scip.Descriptor) str
 	})
 }
 
-func RangeFromName(position token.Position, name string, adjust bool) []int32 {
+func RangeFromName(position token.Position, name string, adjust bool) scip.Range {
 	var adjustment int32 = 0
 	if adjust {
 		adjustment = 1
@@ -34,7 +34,10 @@ func RangeFromName(position token.Position, name string, adjust bool) []int32 {
 	column := int32(position.Column - 1)
 	n := int32(len(name))
 
-	return []int32{line, column + adjustment, column + n + adjustment}
+	return scip.Range{
+		Start: scip.Position{Line: line, Character: column + adjustment},
+		End:   scip.Position{Line: line, Character: column + n + adjustment},
+	}
 }
 
 func FormatCode(v string) string {
