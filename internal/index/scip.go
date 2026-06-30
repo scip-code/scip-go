@@ -236,7 +236,7 @@ func indexVisitPackages(
 				position := pkg.Fset.Position(f.Name.NamePos)
 
 				doc.PackageOccurrence = &scip.Occurrence{
-					Range:       symbols.RangeFromName(position, f.Name.Name, false),
+					TypedRange:  symbols.RangeFromName(position, f.Name.Name, false).AsTypedRange(),
 					Symbol:      pkgSymbol,
 					SymbolRoles: int32(scip.SymbolRole_Definition),
 				}

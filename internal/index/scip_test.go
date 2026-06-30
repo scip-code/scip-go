@@ -82,6 +82,7 @@ func TestSnapshots(t *testing.T) {
 				filteredDocs = append(filteredDocs, doc)
 			}
 			scipIndex.Documents = filteredDocs
+			assertTypedOccurrenceRanges(t, &scipIndex)
 
 			symbolFormatter := scip.SymbolFormatter{
 				OnError:               func(err error) error { return err },
@@ -103,6 +104,29 @@ func TestSnapshots(t *testing.T) {
 			return sourceFiles
 		},
 	)
+}
+
+func assertTypedOccurrenceRanges(t *testing.T, scipIndex *scip.Index) {
+	t.Helper()
+	for _, doc := range scipIndex.Documents {
+		for i, occ := range doc.Occurrences {
+			if occ == nil {
+				t.Fatalf("%s: nil occurrence at index %d", doc.RelativePath, i)
+			}
+			if occ.GetTypedRange() == nil {
+				t.Fatalf("%s: occurrence %q has no typed range", doc.RelativePath, occ.GetSymbol())
+			}
+			if _, ok := occ.SourceRange(); !ok {
+				t.Fatalf("%s: occurrence %q has malformed typed range", doc.RelativePath, occ.GetSymbol())
+			}
+			if len(occ.GetRange()) != 0 {
+				t.Fatalf("%s: occurrence %q set deprecated range: %v", doc.RelativePath, occ.GetSymbol(), occ.GetRange())
+			}
+			if len(occ.GetEnclosingRange()) != 0 {
+				t.Fatalf("%s: occurrence %q set deprecated enclosing_range: %v", doc.RelativePath, occ.GetSymbol(), occ.GetEnclosingRange())
+			}
+		}
+	}
 }
 
 // getTestdataRoot returns the absolute path to the testdata directory of this repository.
