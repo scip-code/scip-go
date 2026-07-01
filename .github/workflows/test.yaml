@@ -75,7 +75,7 @@ jobs:
             expect_file: "lib/protocol/protocol.go"
           - name: bazel-gazelle
             repo: bazelbuild/bazel-gazelle
-            ref: v0.50.0
+            ref: v0.51.3
             expect_file: "cmd/gazelle/main.go"
             gopackagesdriver: true
           - name: prometheus
