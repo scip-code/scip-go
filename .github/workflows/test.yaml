@@ -67,7 +67,7 @@ jobs:
             expect_file: "pkg/apis/core/validation/validation.go"
           - name: caddy
             repo: caddyserver/caddy
-            ref: v2.9.1
+            ref: v2.11.4
             expect_file: "caddy.go"
           - name: syncthing
             repo: syncthing/syncthing
