@@ -84,7 +84,7 @@ jobs:
             expect_file: "cmd/prometheus/main.go"
           - name: hugo
             repo: gohugoio/hugo
-            ref: v0.143.1
+            ref: v0.163.3
             expect_file: "main.go"
           - name: tailscale
             repo: tailscale/tailscale
