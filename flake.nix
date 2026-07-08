@@ -26,7 +26,7 @@
             pname = "scip-go";
             inherit version;
             src = ./.;
-            vendorHash = "sha256-AdEvJ4KxxzNaaBiewwv2IRpasQotF4P08aDEF1ownW0=";
+            vendorHash = "sha256-SOIMANd+v6wArVomT8EDiWn20ufVq48g07XVM8Q1jBk=";
             subPackages = [ "cmd/scip-go" ];
             env.CGO_ENABLED = 0;
             checkPhase = "go test ./...";
