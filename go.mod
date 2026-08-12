@@ -8,7 +8,7 @@ require (
 	golang.org/x/mod v0.38.0
 	golang.org/x/tools v0.48.0
 	golang.org/x/tools/go/vcs v0.1.0-deprecated
-	google.golang.org/protobuf v1.36.11
+	google.golang.org/protobuf v1.36.12
 )
 
 require (
