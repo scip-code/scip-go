@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/alecthomas/kong v1.16.1
 	github.com/scip-code/scip/bindings/go/scip v0.9.0
-	golang.org/x/mod v0.38.0
+	golang.org/x/mod v0.39.0
 	golang.org/x/tools v0.48.0
 	golang.org/x/tools/go/vcs v0.1.0-deprecated
 	google.golang.org/protobuf v1.36.12
