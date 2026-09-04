@@ -11,12 +11,20 @@
 //            display_name Target
 //            signature_documentation
 //            > func Target() interface{AbbreviatedOID(context.Context) (string, error); Commit(context.Context) (string, error); OID(context.Context) (int, error); Type(context.Context) (int, error)}
+//            documentation
+//            > ```go
+//            > func Target() interface{AbbreviatedOID(context.Context) (string, error); Commit(context.Context) (string, error); OID(context.Context) (int, error); Type(context.Context) (int, error)}
+//            > ```
    OID(context.Context) (int, error)
 // ^^^ definition 0.1.test `sg/inlinestruct`/func:Target:OID().
 //     kind MethodSpecification
 //     display_name OID
 //     signature_documentation
 //     > func (interface).OID(context.Context) (int, error)
+//     documentation
+//     > ```go
+//     > func (interface).OID(context.Context) (int, error)
+//     > ```
 //     ^^^^^^^ reference github.com/golang/go/src go1.22 context/
 //             ^^^^^^^ reference github.com/golang/go/src go1.22 context/Context#
    AbbreviatedOID(context.Context) (string, error)
@@ -25,6 +33,10 @@
 //                display_name AbbreviatedOID
 //                signature_documentation
 //                > func (interface).AbbreviatedOID(context.Context) (string, error)
+//                documentation
+//                > ```go
+//                > func (interface).AbbreviatedOID(context.Context) (string, error)
+//                > ```
 //                ^^^^^^^ reference github.com/golang/go/src go1.22 context/
 //                        ^^^^^^^ reference github.com/golang/go/src go1.22 context/Context#
    Commit(context.Context) (string, error)
@@ -33,6 +45,10 @@
 //        display_name Commit
 //        signature_documentation
 //        > func (interface).Commit(context.Context) (string, error)
+//        documentation
+//        > ```go
+//        > func (interface).Commit(context.Context) (string, error)
+//        > ```
 //        ^^^^^^^ reference github.com/golang/go/src go1.22 context/
 //                ^^^^^^^ reference github.com/golang/go/src go1.22 context/Context#
    Type(context.Context) (int, error)
@@ -41,6 +57,10 @@
 //      display_name Type
 //      signature_documentation
 //      > func (interface).Type(context.Context) (int, error)
+//      documentation
+//      > ```go
+//      > func (interface).Type(context.Context) (int, error)
+//      > ```
 //      ^^^^^^^ reference github.com/golang/go/src go1.22 context/
 //              ^^^^^^^ reference github.com/golang/go/src go1.22 context/Context#
   } {
@@ -55,6 +75,10 @@
 //               display_name something
 //               signature_documentation
 //               > func something()
+//               documentation
+//               > ```go
+//               > func something()
+//               > ```
    x := Target()
 // ^ definition local 0
 //   kind Variable

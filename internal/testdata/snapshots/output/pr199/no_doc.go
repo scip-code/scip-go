@@ -9,5 +9,9 @@
 //               display_name FromNoDoc
 //               signature_documentation
 //               > func FromNoDoc()
+//               documentation
+//               > ```go
+//               > func FromNoDoc()
+//               > ```
 //                  ⌃ enclosing_range_end 0.1.test `sg/pr199`/FromNoDoc().
   

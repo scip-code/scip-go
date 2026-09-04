@@ -4,6 +4,10 @@
 //                         display_name testspecial_test
 //                         signature_documentation
 //                         > package testspecial_test
+//                         documentation
+//                         > ```go
+//                         > package testspecial_test
+//                         > ```
   
   import (
    "testing"
@@ -20,6 +24,10 @@
 //                      display_name TestFoo_Blackbox
 //                      signature_documentation
 //                      > func TestFoo_Blackbox(*testing.T)
+//                      documentation
+//                      > ```go
+//                      > func TestFoo_Blackbox(*testing.T)
+//                      > ```
 //                       ^^^^^^^ reference github.com/golang/go/src go1.22 testing/
 //                               ^ reference github.com/golang/go/src go1.22 testing/T#
 //                                    ^^^^^^^^^^^ reference 0.1.test `sg/testspecial`/

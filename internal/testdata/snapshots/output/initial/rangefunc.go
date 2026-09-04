@@ -13,6 +13,10 @@
 //       display_name f
 //       signature_documentation
 //       > func f(xs []int) int
+//       documentation
+//       > ```go
+//       > func f(xs []int) int
+//       > ```
 //       ^^ definition local 0
 //          kind Variable
 //          display_name xs

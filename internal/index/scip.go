@@ -70,10 +70,15 @@ func ListMissing(opts config.IndexOpts) (missing []string, err error) {
 	}
 
 	for _, pkg := range projectPackages {
+		goFiles := visitors.RealGoFiles(pkg)
 		for _, f := range pkg.Syntax {
-			docName := pkg.Fset.File(f.Package).Name()
-			if _, ok := pathToDocuments[docName]; !ok {
-				missing = append(missing, docName)
+			origin := visitors.OriginFile(pkg, f.Package)
+			if _, isReal := goFiles[origin]; !isReal {
+				// Generated file with no real-source origin (e.g. cgo glue).
+				continue
+			}
+			if _, ok := pathToDocuments[origin]; !ok {
+				missing = append(missing, origin)
 			}
 		}
 	}
@@ -120,7 +125,6 @@ func Index(writer func(proto.Message) error, opts config.IndexOpts) error {
 
 	var count uint64
 	var wg sync.WaitGroup
-	var writeErr error
 	wg.Add(1)
 
 	go func() {
@@ -131,30 +135,31 @@ func Index(writer func(proto.Message) error, opts config.IndexOpts) error {
 			pkgSymbols := globalSymbols.GetPackage(pkg)
 
 			for _, file := range pkg.Syntax {
-				doc := pathToDocument[pkg.Fset.File(file.Package).Name()]
+				origin := visitors.OriginFile(pkg, file.Package)
+				doc := pathToDocument[origin]
 				if doc == nil {
+					// No document: a generated file (e.g. cgo's
+					// _cgo_gotypes.go) whose occurrences are compiler glue.
 					continue
 				}
 
-				// If possible, any state required for created a scip document
-				// should be contained in the visitor. This makes sure that we can
-				// garbage collect everything that's there after each loop,
-				// rather than holding on to every occurrence and piece of data
+				// The visitor routes each occurrence to the document of its
+				// //line-adjusted origin (usually this file, but a generated file
+				// can attribute some occurrences to another real source file), so
+				// it needs the whole document map, not just this file's document.
 				visitor := visitors.NewFileVisitor(
 					doc,
 					pkg,
 					file,
 					pkgSymbols,
 					globalSymbols,
+					pathToDocument,
 				)
 
-				// Traverse the file
+				// Traverse the file (routing occurrences), then attach this
+				// file's symbols to its document.
 				ast.Walk(visitor, file)
-
-				// Write the document
-				if writeErr = writer(visitor.ToScipDocument()); writeErr != nil {
-					return
-				}
+				visitor.Finish()
 			}
 
 			atomic.AddUint64(&count, 1)
@@ -163,8 +168,12 @@ func Index(writer func(proto.Message) error, opts config.IndexOpts) error {
 
 	output.WithProgressParallel(&wg, "Visiting Project Files", &count, uint64(pkgLen))
 
-	if writeErr != nil {
-		return writeErr
+	// Emit one document per source file -- occurrences routed from every file
+	// that maps here are now accumulated -- in a stable, path-sorted order.
+	for _, origin := range slices.Sorted(maps.Keys(pathToDocument)) {
+		if err := writer(pathToDocument[origin].ToScip()); err != nil {
+			return err
+		}
 	}
 
 	// Emit external symbols for remote types that implement local interfaces
@@ -217,24 +226,34 @@ func indexVisitPackages(
 
 			pkgSymbol, _ := globalSymbols.GetPkgSymbol(pkg)
 
+			pkgSignature := "package " + pkg.Name
 			symInfo := &scip.SymbolInformation{
-				Symbol:        pkgSymbol,
-				Kind:          scip.SymbolInformation_Package,
-				DisplayName:   pkg.Name,
-				Documentation: findPackageDocs(pkg),
+				Symbol:      pkgSymbol,
+				Kind:        scip.SymbolInformation_Package,
+				DisplayName: pkg.Name,
+				Documentation: append(
+					[]string{symbols.FormatCode(pkgSignature)},
+					findPackageDocs(pkg)...,
+				),
 				SignatureDocumentation: &scip.Signature{
 					Language: "go",
-					Text:     "package " + pkg.Name,
+					Text:     pkgSignature,
 				},
 			}
-			firstFile := pkg.Syntax[0]
-			firstDoc := pathToDocuments[pkg.Fset.File(firstFile.Package).Name()]
-			firstDoc.SetSymbolInformation(firstFile.Name.NamePos, symInfo)
-
+			// Attach the package symbol to the first real document and a
+			// package occurrence to each. Generated files (e.g. cgo's
+			// _cgo_gotypes.go) have no document, so skip them.
+			pkgDeclared := false
 			for _, f := range pkg.Syntax {
-				doc := pathToDocuments[pkg.Fset.File(f.Package).Name()]
+				doc := pathToDocuments[visitors.OriginFile(pkg, f.Package)]
+				if doc == nil {
+					continue
+				}
+				if !pkgDeclared {
+					doc.SetSymbolInformation(f.Name.NamePos, symInfo)
+					pkgDeclared = true
+				}
 				position := pkg.Fset.Position(f.Name.NamePos)
-
 				doc.PackageOccurrence = &scip.Occurrence{
 					TypedRange:  symbols.RangeFromName(position, f.Name.Name, false).AsTypedRange(),
 					Symbol:      pkgSymbol,

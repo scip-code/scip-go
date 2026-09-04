@@ -5,6 +5,10 @@
 //                signature_documentation
 //                > package initial
 //                documentation
+//                > ```go
+//                > package initial
+//                > ```
+//                documentation
 //                > This is a module for testing purposes.
 //                > This should now be the place that has a definition
   
@@ -15,6 +19,10 @@
 //                 display_name UsesBuiltin
 //                 signature_documentation
 //                 > func UsesBuiltin() int
+//                 documentation
+//                 > ```go
+//                 > func UsesBuiltin() int
+//                 > ```
    var x int = 5
 //     ^ definition local 0
 //       kind Variable

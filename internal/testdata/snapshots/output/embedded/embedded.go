@@ -4,6 +4,10 @@
 //                 display_name embedded
 //                 signature_documentation
 //                 > package embedded
+//                 documentation
+//                 > ```go
+//                 > package embedded
+//                 > ```
   
   import (
    "fmt"
@@ -18,6 +22,10 @@
 //                   display_name osExecCommand
 //                   signature_documentation
 //                   > type osExecCommand struct{ *exec.Cmd }
+//                   documentation
+//                   > ```go
+//                   > type osExecCommand struct{ *exec.Cmd }
+//                   > ```
 //                   relationship github.com/golang/go/src go1.22 fmt/Stringer# implementation
    *exec.Cmd
 //  ^^^^ reference github.com/golang/go/src go1.22 `os/exec`/
@@ -26,6 +34,10 @@
 //           display_name Cmd
 //           signature_documentation
 //           > struct field Cmd *exec.Cmd
+//           documentation
+//           > ```go
+//           > struct field Cmd *exec.Cmd
+//           > ```
 //       ^^^ reference github.com/golang/go/src go1.22 `os/exec`/Cmd#
   }
   
@@ -36,6 +48,10 @@
 //                     display_name wrapExecCommand
 //                     signature_documentation
 //                     > func wrapExecCommand(c *exec.Cmd)
+//                     documentation
+//                     > ```go
+//                     > func wrapExecCommand(c *exec.Cmd)
+//                     > ```
 //                     ^ definition local 0
 //                       kind Variable
 //                       display_name c
@@ -60,24 +76,44 @@
 //           >     Y int
 //           >     Z int
 //           > }
+//           documentation
+//           > ```go
+//           > type Inner struct {
+//           >     X int
+//           >     Y int
+//           >     Z int
+//           > }
+//           > ```
    X int
 // ^ definition 0.1.test `sg/embedded`/Inner#X.
 //   kind Field
 //   display_name X
 //   signature_documentation
 //   > struct field X int
+//   documentation
+//   > ```go
+//   > struct field X int
+//   > ```
    Y int
 // ^ definition 0.1.test `sg/embedded`/Inner#Y.
 //   kind Field
 //   display_name Y
 //   signature_documentation
 //   > struct field Y int
+//   documentation
+//   > ```go
+//   > struct field Y int
+//   > ```
    Z int
 // ^ definition 0.1.test `sg/embedded`/Inner#Z.
 //   kind Field
 //   display_name Z
 //   signature_documentation
 //   > struct field Z int
+//   documentation
+//   > ```go
+//   > struct field Z int
+//   > ```
   }
   
   type Outer struct {
@@ -89,12 +125,23 @@
 //           >     Inner
 //           >     W int
 //           > }
+//           documentation
+//           > ```go
+//           > type Outer struct {
+//           >     Inner
+//           >     W int
+//           > }
+//           > ```
    Inner
 // ^^^^^ definition 0.1.test `sg/embedded`/Outer#Inner.
 //       kind Field
 //       display_name Inner
 //       signature_documentation
 //       > struct field Inner Inner
+//       documentation
+//       > ```go
+//       > struct field Inner Inner
+//       > ```
 // ^^^^^ reference 0.1.test `sg/embedded`/Inner#
    W int
 // ^ definition 0.1.test `sg/embedded`/Outer#W.
@@ -102,6 +149,10 @@
 //   display_name W
 //   signature_documentation
 //   > struct field W int
+//   documentation
+//   > ```go
+//   > struct field W int
+//   > ```
   }
   
 //⌄ enclosing_range_start 0.1.test `sg/embedded`/useOfCompositeStructs().
@@ -111,6 +162,10 @@
 //                           display_name useOfCompositeStructs
 //                           signature_documentation
 //                           > func useOfCompositeStructs()
+//                           documentation
+//                           > ```go
+//                           > func useOfCompositeStructs()
+//                           > ```
    o := Outer{
 // ^ definition local 1
 //   kind Variable

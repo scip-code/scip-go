@@ -10,12 +10,20 @@
 //            display_name Person
 //            signature_documentation
 //            > type Person interface{ Work() }
+//            documentation
+//            > ```go
+//            > type Person interface{ Work() }
+//            > ```
    Work()
 // ^^^^ definition 0.1.test `sg/generallyeric`/Person#Work.
 //      kind MethodSpecification
 //      display_name Work
 //      signature_documentation
 //      > func (Person).Work()
+//      documentation
+//      > ```go
+//      > func (Person).Work()
+//      > ```
   }
   
   type worker string
@@ -24,6 +32,10 @@
 //            display_name worker
 //            signature_documentation
 //            > type worker string
+//            documentation
+//            > ```go
+//            > type worker string
+//            > ```
 //            relationship 0.1.test `sg/generallyeric`/Person# implementation
   
 //⌄ enclosing_range_start 0.1.test `sg/generallyeric`/worker#Work().
@@ -39,6 +51,10 @@
 //                     display_name Work
 //                     signature_documentation
 //                     > func (worker).Work()
+//                     documentation
+//                     > ```go
+//                     > func (worker).Work()
+//                     > ```
 //                     relationship 0.1.test `sg/generallyeric`/Person#Work. implementation
    fmt.Printf("%s is working\n", w)
 // ^^^ reference github.com/golang/go/src go1.22 fmt/
@@ -54,6 +70,10 @@
 //            display_name DoWork
 //            signature_documentation
 //            > func DoWork[T Person](things []T)
+//            documentation
+//            > ```go
+//            > func DoWork[T Person](things []T)
+//            > ```
 //            ^ definition local 1
 //              kind Interface
 //              display_name T
@@ -87,6 +107,10 @@
 //          display_name main
 //          signature_documentation
 //          > func main()
+//          documentation
+//          > ```go
+//          > func main()
+//          > ```
    var a, b, c worker
 //     ^ definition local 4
 //       kind Variable

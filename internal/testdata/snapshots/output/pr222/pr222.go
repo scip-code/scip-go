@@ -4,6 +4,10 @@
 //              display_name pr222
 //              signature_documentation
 //              > package pr222
+//              documentation
+//              > ```go
+//              > package pr222
+//              > ```
   
   import "github.com/example/deplib"
 //        ^^^^^^^^^^^^^^^^^^^^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/
@@ -15,6 +19,10 @@
 //                     display_name UseGenericField
 //                     signature_documentation
 //                     > func UseGenericField() int
+//                     documentation
+//                     > ```go
+//                     > func UseGenericField() int
+//                     > ```
    b := deplib.Box[int]{Value: 42}
 // ^ definition local 0
 //   kind Variable
@@ -37,6 +45,10 @@
 //                      display_name UseGenericMethod
 //                      signature_documentation
 //                      > func UseGenericMethod() string
+//                      documentation
+//                      > ```go
+//                      > func UseGenericMethod() string
+//                      > ```
    b := deplib.Box[string]{Value: "hello"}
 // ^ definition local 1
 //   kind Variable
@@ -59,6 +71,10 @@
 //                        display_name UseNonGenericField
 //                        signature_documentation
 //                        > func UseNonGenericField() string
+//                        documentation
+//                        > ```go
+//                        > func UseNonGenericField() string
+//                        > ```
    c := deplib.Config{Name: "test", Verbose: true}
 // ^ definition local 2
 //   kind Variable
@@ -82,6 +98,10 @@
 //              display_name UseConst
 //              signature_documentation
 //              > func UseConst() string
+//              documentation
+//              > ```go
+//              > func UseConst() string
+//              > ```
    return deplib.DefaultName
 //        ^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/
 //               ^^^^^^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/DefaultName.
@@ -95,6 +115,10 @@
 //            display_name UseVar
 //            signature_documentation
 //            > func UseVar() int
+//            documentation
+//            > ```go
+//            > func UseVar() int
+//            > ```
    return deplib.GlobalCounter
 //        ^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/
 //               ^^^^^^^^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/GlobalCounter.
@@ -107,6 +131,10 @@
 //               display_name LocalType
 //               signature_documentation
 //               > type LocalType struct{}
+//               documentation
+//               > ```go
+//               > type LocalType struct{}
+//               > ```
 //               relationship github.com/example/deplib 0.1.test `github.com/example/deplib`/Stringer# implementation
   
 //⌄ enclosing_range_start 0.1.test `sg/pr222`/LocalType#String().
@@ -122,6 +150,10 @@
 //                          display_name String
 //                          signature_documentation
 //                          > func (LocalType).String() string
+//                          documentation
+//                          > ```go
+//                          > func (LocalType).String() string
+//                          > ```
 //                          relationship github.com/example/deplib 0.1.test `github.com/example/deplib`/Stringer#String(). implementation
 //                                                    ⌃ enclosing_range_end 0.1.test `sg/pr222`/LocalType#String().
   
@@ -131,6 +163,10 @@
 //                      display_name EmbeddedStringer
 //                      signature_documentation
 //                      > type EmbeddedStringer struct{ LocalType }
+//                      documentation
+//                      > ```go
+//                      > type EmbeddedStringer struct{ LocalType }
+//                      > ```
 //                      relationship github.com/example/deplib 0.1.test `github.com/example/deplib`/Stringer# implementation
    LocalType
 // ^^^^^^^^^ definition 0.1.test `sg/pr222`/EmbeddedStringer#LocalType.
@@ -138,6 +174,10 @@
 //           display_name LocalType
 //           signature_documentation
 //           > struct field LocalType LocalType
+//           documentation
+//           > ```go
+//           > struct field LocalType LocalType
+//           > ```
 // ^^^^^^^^^ reference 0.1.test `sg/pr222`/LocalType#
   }
   
@@ -147,12 +187,20 @@
 //                    display_name LocalInterface
 //                    signature_documentation
 //                    > type LocalInterface interface{ Get() int }
+//                    documentation
+//                    > ```go
+//                    > type LocalInterface interface{ Get() int }
+//                    > ```
    Get() int
 // ^^^ definition 0.1.test `sg/pr222`/LocalInterface#Get.
 //     kind MethodSpecification
 //     display_name Get
 //     signature_documentation
 //     > func (LocalInterface).Get() int
+//     documentation
+//     > ```go
+//     > func (LocalInterface).Get() int
+//     > ```
   }
   
 //⌄ enclosing_range_start 0.1.test `sg/pr222`/UseDepWriter().
@@ -162,6 +210,10 @@
 //                  display_name UseDepWriter
 //                  signature_documentation
 //                  > func UseDepWriter(w deplib.Writer)
+//                  documentation
+//                  > ```go
+//                  > func UseDepWriter(w deplib.Writer)
+//                  > ```
 //                  ^ definition local 4
 //                    kind Variable
 //                    display_name w

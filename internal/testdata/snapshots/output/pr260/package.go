@@ -4,4 +4,8 @@
 //              display_name pr260
 //              signature_documentation
 //              > package pr260
+//              documentation
+//              > ```go
+//              > package pr260
+//              > ```
   

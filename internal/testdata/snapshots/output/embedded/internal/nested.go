@@ -4,6 +4,10 @@
 //                        display_name nested_internal
 //                        signature_documentation
 //                        > package nested_internal
+//                        documentation
+//                        > ```go
+//                        > package nested_internal
+//                        > ```
   
   import (
    "fmt"
@@ -19,6 +23,10 @@
 //               display_name Something
 //               signature_documentation
 //               > func Something(recent embedded.RecentCommittersResults)
+//               documentation
+//               > ```go
+//               > func Something(recent embedded.RecentCommittersResults)
+//               > ```
 //               ^^^^^^ definition local 0
 //                      kind Variable
 //                      display_name recent

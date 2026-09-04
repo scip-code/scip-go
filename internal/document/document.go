@@ -10,6 +10,7 @@ import (
 	"go/types"
 	"log/slog"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -38,11 +39,14 @@ func IsDocDeprecated(docs []string) bool {
 
 func NewDocument(
 	relative string,
+	originAbs string,
 	pkg *packages.Package,
 	pkgSymbols *lookup.Package,
 ) *Document {
 	return &Document{
 		RelativePath: relative,
+		originAbs:    originAbs,
+		lineLen:      loadLineLengths(originAbs),
 		pkg:          pkg,
 		pkgSymbols:   pkgSymbols,
 
@@ -70,6 +74,156 @@ type Document struct {
 	// pkgSymbols maps positions to symbol names within
 	// this document.
 	pkgSymbols *lookup.Package
+
+	// originAbs is the cleaned, symlink-resolved absolute path of the source file
+	// this document represents; lineLen is the byte length of each of its lines
+	// (0-indexed), or nil if it couldn't be read. Together they let AppendOccurrence
+	// callers reject occurrences whose //line-adjusted range escapes the real file.
+	originAbs string
+	lineLen   []int
+
+	// lines is the document's source split by line, loaded lazily by lineText:
+	// only documents that need a range repair pay to keep their source resident.
+	// linesLoaded distinguishes "not tried yet" from "tried and unreadable".
+	lines       []string
+	linesLoaded bool
+
+	// occurrences accumulates every occurrence routed to this document. Usually
+	// that is only its own file's, but a generated file may attribute occurrences
+	// here via //line directives (e.g. cgo's rewritten source). extraSymbols
+	// accumulates SymbolInformation from the file(s) that map here.
+	occurrences  []*scip.Occurrence
+	extraSymbols []*scip.SymbolInformation
+}
+
+// InBounds reports whether r is a well-formed range that fits within this
+// document's source file. It rejects:
+//   - negative line/column (a `//line file:N` directive with no column collapses
+//     positions to column 0 -> scip -1, which is malformed);
+//   - lines past EOF or columns past the line (cgo's `defer C.f(x)` rewrites and
+//     inserted `_cgoCheckPointer` thunks land here);
+//   - reversed ranges (end before start).
+//
+// Such occurrences cannot be faithfully represented and are dropped rather than
+// emitted with a bogus location (which downstream SCIP consumers reject). A
+// document whose source could not be read admits everything (no over-dropping).
+func (d *Document) InBounds(r scip.Range) bool {
+	sl, sc, el, ec := int(r.Start.Line), int(r.Start.Character), int(r.End.Line), int(r.End.Character)
+	if sl < 0 || sc < 0 || el < 0 || ec < 0 {
+		return false
+	}
+	if el < sl || (el == sl && ec < sc) {
+		return false
+	}
+	if d.lineLen == nil {
+		return true
+	}
+	if sl >= len(d.lineLen) || el >= len(d.lineLen) {
+		return false
+	}
+	return sc <= d.lineLen[sl] && ec <= d.lineLen[el]
+}
+
+// cgoSourceName matches the text cgo rewrote into a mangled identifier: a
+// `C.foo` selector, or a bare identifier for manglings that drop the prefix.
+// Anchored, so it only matches at the column the range starts on.
+var cgoSourceName = regexp.MustCompile(`^(?:C\.)?[\p{L}_][\p{L}\p{Nd}_]*`)
+
+// RepairRange rebuilds an out-of-bounds range from the source text it actually
+// covers, returning the replacement and true when one is available.
+//
+// A range's width comes from the identifier the type checker sees, and cgo's
+// identifiers are mangled: `C.puts` is rewritten to `_Cfunc_puts`, so a range
+// anchored at the right column is emitted five characters too wide and can spill
+// past the end of the real line. The position is fine; only the width is wrong.
+// Measuring the identifier that is genuinely at that column recovers the
+// occurrence instead of discarding it.
+//
+// Only a single-line range starting inside real source can be repaired. A
+// synthesized position -- cgo's `defer C.f(x)` wrapper, which lands at
+// end-of-line where there is no identifier to measure -- matches nothing and is
+// still dropped, so this never invents a location.
+func (d *Document) RepairRange(r scip.Range) (scip.Range, bool) {
+	if r.Start.Line != r.End.Line || r.Start.Line < 0 || r.Start.Character < 0 {
+		return r, false
+	}
+	line, ok := d.lineText(int(r.Start.Line))
+	if !ok || int(r.Start.Character) >= len(line) {
+		return r, false
+	}
+	name := cgoSourceName.FindString(line[r.Start.Character:])
+	if name == "" {
+		return r, false
+	}
+	repaired := scip.Range{
+		Start: r.Start,
+		End: scip.Position{
+			Line:      r.Start.Line,
+			Character: r.Start.Character + int32(len(name)),
+		},
+	}
+	if !d.InBounds(repaired) {
+		return r, false
+	}
+	return repaired, true
+}
+
+// lineText returns 0-indexed line l of this document's source. The source is
+// read on first use and cached, so documents that never need a repair keep only
+// their line lengths.
+func (d *Document) lineText(l int) (string, bool) {
+	if !d.linesLoaded {
+		d.linesLoaded = true
+		if b, err := os.ReadFile(d.originAbs); err == nil {
+			d.lines = strings.Split(string(b), "\n")
+		}
+	}
+	if l < 0 || l >= len(d.lines) {
+		return "", false
+	}
+	return strings.TrimSuffix(d.lines[l], "\r"), true
+}
+
+// AppendOccurrence records occ against this document. Called from the single
+// file-walking goroutine, so no synchronization is required.
+func (d *Document) AppendOccurrence(occ *scip.Occurrence) {
+	d.occurrences = append(d.occurrences, occ)
+}
+
+// AddSymbols records SymbolInformation contributed by a file that maps here.
+func (d *Document) AddSymbols(syms []*scip.SymbolInformation) {
+	d.extraSymbols = append(d.extraSymbols, syms...)
+}
+
+// ToScip renders the accumulated occurrences and symbols as a scip.Document.
+func (d *Document) ToScip() *scip.Document {
+	occurrences := d.occurrences
+	if d.PackageOccurrence != nil {
+		occurrences = append([]*scip.Occurrence{d.PackageOccurrence}, occurrences...)
+	}
+	return &scip.Document{
+		Language:     "go",
+		RelativePath: d.RelativePath,
+		Occurrences:  occurrences,
+		Symbols:      d.extraSymbols,
+	}
+}
+
+// loadLineLengths returns the byte length of each line of path (0-indexed), or
+// nil if it can't be read. Used to bounds-check occurrence ranges against the
+// real source (cgo rewrites some constructs to positions past the original
+// line/EOF; those can't be faithfully represented and are dropped).
+func loadLineLengths(path string) []int {
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return nil
+	}
+	lines := strings.Split(string(b), "\n")
+	lengths := make([]int, len(lines))
+	for i, line := range lines {
+		lengths[i] = len(strings.TrimSuffix(line, "\r"))
+	}
+	return lengths
 }
 
 func (d *Document) GetSymbol(pos token.Pos) (string, bool) {
@@ -120,14 +274,20 @@ func (d *Document) SetNewSymbolForPos(
 					Language: "go",
 					Text:     signature,
 				}
+				// Also render the signature into `documentation`: consumers that predate
+				// `signature_documentation` read only that field, and would otherwise lose
+				// the signature entirely.
+				documentation = append(documentation, symbols.FormatCode(signature))
 			}
 		}
+		var hoverText string
 		if hover := d.extractHoverText(parent, ident); hover != "" {
+			hoverText = hover
 			documentation = append(documentation, hover)
 		}
 		if genDecl, ok := parent.(*ast.GenDecl); ok && genDecl.Doc != nil {
 			blockDoc := strings.TrimSpace(genDecl.Doc.Text())
-			if blockDoc != "" && (len(documentation) == 0 || documentation[0] != blockDoc) {
+			if blockDoc != "" && blockDoc != hoverText {
 				documentation = append(documentation, blockDoc)
 			}
 		}

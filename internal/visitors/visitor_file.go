@@ -21,6 +21,7 @@ func NewFileVisitor(
 	file *ast.File,
 	pkgSymbols *lookup.Package,
 	globalSymbols *lookup.Global,
+	docs map[string]*document.Document,
 ) *fileVisitor {
 	caseClauses := map[token.Pos]types.Object{}
 	for implicit, obj := range pkg.TypesInfo.Implicits {
@@ -29,19 +30,14 @@ func NewFileVisitor(
 		}
 	}
 
-	// Package occurrence always goes into the list of occurrences for a document
-	occurrences := []*scip.Occurrence{
-		doc.PackageOccurrence,
-	}
-
 	return &fileVisitor{
 		doc:           doc,
+		docs:          docs,
 		pkg:           pkg,
 		file:          file,
 		locals:        map[token.Pos]lookup.Local{},
 		pkgSymbols:    pkgSymbols,
 		globalSymbols: globalSymbols,
-		occurrences:   occurrences,
 		caseClauses:   caseClauses,
 	}
 }
@@ -51,8 +47,18 @@ func NewFileVisitor(
 //
 // Iterates over a file,
 type fileVisitor struct {
-	// Document to append occurrences to
+	// doc is the document for this file's own origin; SymbolInformation defined in
+	// the file is attached here in Finish. Occurrences are routed per-occurrence
+	// to the document of their //line-adjusted origin (see docs) -- usually doc,
+	// but a generated file (e.g. cgo's rewritten source) can attribute some of its
+	// occurrences to a different real source file.
 	doc *document.Document
+
+	// docs maps a resolved-origin absolute path to its document (the same map the
+	// index builds -- one entry per real source file). Occurrences are routed here
+	// by origin; an occurrence whose origin has no entry (cgo glue, a yacc `.y`, a
+	// build-cache path) is dropped rather than mis-attributed.
+	docs map[string]*document.Document
 
 	// Current file information
 	pkg  *packages.Package
@@ -66,9 +72,6 @@ type fileVisitor struct {
 
 	// field definition position to symbol for the entire compliation
 	globalSymbols *lookup.Global
-
-	// occurrences in this file
-	occurrences []*scip.Occurrence
 
 	// caseClauses maps particular positions to different types for case clauses
 	caseClauses map[token.Pos]types.Object
@@ -117,8 +120,9 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 
 		if node.Name != nil && node.Name.Name != "." && node.Name.Name != "_" {
 			if sym, ok := v.globalSymbols.GetPkgSymbol(importedPackage); ok {
-				v.newReference(sym, symbols.RangeFromName(
-					v.pkg.Fset.Position(node.Name.Pos()), node.Name.Name, false), false)
+				namePos := v.pkg.Fset.Position(node.Name.Pos())
+				v.newReference(namePos, sym, symbols.RangeFromName(
+					namePos, node.Name.Name, false), false)
 			}
 		}
 
@@ -147,7 +151,7 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 				}
 
 				symRange := scipRange(startPosition, endPosition, sel)
-				v.newReference(sym, symRange, false)
+				v.newReference(startPosition, sym, symRange, false)
 
 				// Then walk the selection
 				ast.Walk(v, node.Sel)
@@ -194,7 +198,7 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 		// Short circuit on case clauses
 		if obj, ok := v.caseClauses[node.Pos()]; ok {
 			symName := v.createNewLocalSymbol(obj.Pos(), obj)
-			v.newDefinition(symName, scipRange(startPosition, endPosition, obj), nil, false)
+			v.newDefinition(startPosition, symName, scipRange(startPosition, endPosition, obj), nil, false)
 			return nil
 		}
 
@@ -213,6 +217,7 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 			}
 
 			v.newDefinition(
+				startPosition,
 				symName,
 				scipRange(startPosition, endPosition, def),
 				v.enclosingRange(node),
@@ -255,7 +260,7 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 				deprecated = document.IsDocDeprecated(symInfo.Documentation)
 			}
 
-			v.newReference(symbol, scipRange(startPosition, endPosition, ref), deprecated)
+			v.newReference(startPosition, symbol, scipRange(startPosition, endPosition, ref), deprecated)
 		}
 
 		if def == nil && ref == nil {
@@ -282,31 +287,70 @@ func (v *fileVisitor) emitImportReference(
 		return
 	}
 
-	v.newReference(sym, symbols.RangeFromName(position, importedPackage.PkgPath, true), false)
+	v.newReference(position, sym, symbols.RangeFromName(position, importedPackage.PkgPath, true), false)
+}
+
+// targetDoc resolves the document an occurrence at pos with range rng belongs
+// to, along with the range to emit. A nil document means drop the occurrence.
+//
+// An occurrence's true home is its //line-adjusted origin file: usually the file
+// being walked, but a generated file (cgo, ...) can attribute an occurrence to a
+// *different* real source file, in which case it is routed there rather than
+// dropped. An occurrence whose origin is not a real source document (cgo glue, a
+// yacc `.y`, a build-cache path) is dropped.
+//
+// A range that escapes the origin's source gets one repair attempt first: cgo
+// widens ranges by mangling identifiers (`C.puts` -> `_Cfunc_puts`), which pushes
+// a correctly-positioned occurrence past end-of-line, and Document.RepairRange
+// re-measures it against the real source. Only when that fails is the occurrence
+// dropped, rather than emitted with a bogus location (which downstream SCIP
+// consumers reject).
+func (v *fileVisitor) targetDoc(pos token.Position, rng scip.Range) (*document.Document, scip.Range) {
+	doc := v.docs[CleanResolve(pos.Filename)]
+	if doc == nil {
+		return nil, rng
+	}
+	if doc.InBounds(rng) {
+		return doc, rng
+	}
+	if repaired, ok := doc.RepairRange(rng); ok {
+		return doc, repaired
+	}
+	return nil, rng
 }
 
 // newDefinition emits a scip.Occurence ONLY. This will not emit a
 // new symbol. You must do that using DeclareNewSymbol[ForPos]
 func (v *fileVisitor) newDefinition(
-	symbol string, rng scip.Range, enclRng *scip.Range, deprecated bool,
+	pos token.Position, symbol string, rng scip.Range, enclRng *scip.Range, deprecated bool,
 ) {
+	doc, rng := v.targetDoc(pos, rng)
+	if doc == nil {
+		return
+	}
 	occ := &scip.Occurrence{
 		TypedRange:  rng.AsTypedRange(),
 		Symbol:      symbol,
 		SymbolRoles: int32(scip.SymbolRole_Definition),
 	}
-	if enclRng != nil {
+	// Keep the enclosing range only if it fits the same source (a cgo-expanded
+	// body can push it past EOF even when the name range is fine).
+	if enclRng != nil && doc.InBounds(*enclRng) {
 		occ.TypedEnclosingRange = enclRng.AsTypedEnclosingRange()
 	}
 	if deprecated {
 		occ.Diagnostics = deprecatedDiagnostics()
 	}
-	v.occurrences = append(v.occurrences, occ)
+	doc.AppendOccurrence(occ)
 }
 
 func (v *fileVisitor) newReference(
-	symbol string, rng scip.Range, deprecated bool,
+	pos token.Position, symbol string, rng scip.Range, deprecated bool,
 ) {
+	doc, rng := v.targetDoc(pos, rng)
+	if doc == nil {
+		return
+	}
 	occ := &scip.Occurrence{
 		TypedRange:  rng.AsTypedRange(),
 		Symbol:      symbol,
@@ -315,13 +359,16 @@ func (v *fileVisitor) newReference(
 	if deprecated {
 		occ.Diagnostics = deprecatedDiagnostics()
 	}
-	v.occurrences = append(v.occurrences, occ)
+	doc.AppendOccurrence(occ)
 }
 
-func (v *fileVisitor) ToScipDocument() *scip.Document {
+// Finish attaches the file's SymbolInformation (package-level symbols defined in
+// the file, plus locals) to the file's own document. Occurrences are routed to
+// their origin documents during the walk; call Finish once after the walk.
+func (v *fileVisitor) Finish() {
 	documentFile := v.pkg.Fset.File(v.file.Pos())
 	if documentFile == nil {
-		panic("that shouldn't happend")
+		return
 	}
 
 	documentSymbols := v.pkgSymbols.SymbolsForFile(documentFile)
@@ -349,12 +396,7 @@ func (v *fileVisitor) ToScipDocument() *scip.Document {
 		documentSymbols = append(documentSymbols, symbolInfo)
 	}
 
-	return &scip.Document{
-		Language:     "go",
-		RelativePath: v.doc.RelativePath,
-		Occurrences:  v.occurrences,
-		Symbols:      documentSymbols,
-	}
+	v.doc.AddSymbols(documentSymbols)
 }
 
 func (v *fileVisitor) enclosingRange(n *ast.Ident) *scip.Range {

@@ -4,6 +4,10 @@
 //                   display_name pr256_test
 //                   signature_documentation
 //                   > package pr256_test
+//                   documentation
+//                   > ```go
+//                   > package pr256_test
+//                   > ```
   
   import "testing"
 //        ^^^^^^^ reference github.com/golang/go/src go1.22 testing/
@@ -15,6 +19,10 @@
 //                 display_name TestComment
 //                 signature_documentation
 //                 > func TestComment(t *testing.T)
+//                 documentation
+//                 > ```go
+//                 > func TestComment(t *testing.T)
+//                 > ```
 //                 ^ definition local 0
 //                   kind Variable
 //                   display_name t

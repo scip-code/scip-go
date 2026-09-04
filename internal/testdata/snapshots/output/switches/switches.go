@@ -4,6 +4,10 @@
 //                 display_name switches
 //                 signature_documentation
 //                 > package switches
+//                 documentation
+//                 > ```go
+//                 > package switches
+//                 > ```
   
   // CustomSwitch does the things in a switch
   type CustomSwitch struct{}
@@ -12,6 +16,10 @@
 //                  display_name CustomSwitch
 //                  signature_documentation
 //                  > type CustomSwitch struct{}
+//                  documentation
+//                  > ```go
+//                  > type CustomSwitch struct{}
+//                  > ```
 //                  documentation
 //                  > CustomSwitch does the things in a switch
   
@@ -30,6 +38,10 @@
 //                                 signature_documentation
 //                                 > func (*CustomSwitch).Something() bool
 //                                 documentation
+//                                 > ```go
+//                                 > func (*CustomSwitch).Something() bool
+//                                 > ```
+//                                 documentation
 //                                 > Something does some things... and stuff
 //                                                       ⌃ enclosing_range_end 0.1.test `sg/switches`/CustomSwitch#Something().
   
@@ -40,6 +52,10 @@
 //            display_name Switch
 //            signature_documentation
 //            > func Switch(interfaceValue interface{}) bool
+//            documentation
+//            > ```go
+//            > func Switch(interfaceValue interface{}) bool
+//            > ```
 //            ^^^^^^^^^^^^^^ definition local 1
 //                           kind Variable
 //                           display_name interfaceValue

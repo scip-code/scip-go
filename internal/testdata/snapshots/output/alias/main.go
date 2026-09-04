@@ -4,6 +4,10 @@
 //             display_name main
 //             signature_documentation
 //             > package main
+//             documentation
+//             > ```go
+//             > package main
+//             > ```
   
   // Check that we don't panic
   // Copied from https://github.com/golang/go/issues/68877#issuecomment-2290000187
@@ -15,6 +19,10 @@
 //   signature_documentation
 //   > type T struct{}
 //   documentation
+//   > ```go
+//   > type T struct{}
+//   > ```
+//   documentation
 //   > Check that we don't panic
 //   > Copied from https://github.com/golang/go/issues/68877#issuecomment-2290000187
    U = T
@@ -23,6 +31,10 @@
 //   display_name U
 //   signature_documentation
 //   > type U = T
+//   documentation
+//   > ```go
+//   > type U = T
+//   > ```
 //   documentation
 //   > Check that we don't panic
 //   > Copied from https://github.com/golang/go/issues/68877#issuecomment-2290000187
@@ -34,6 +46,10 @@
 //   signature_documentation
 //   > type V = U
 //   documentation
+//   > ```go
+//   > type V = U
+//   > ```
+//   documentation
 //   > Check that we don't panic
 //   > Copied from https://github.com/golang/go/issues/68877#issuecomment-2290000187
 //     ^ reference github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/U#
@@ -44,6 +60,10 @@
 //   signature_documentation
 //   > type S struct{}
 //   documentation
+//   > ```go
+//   > type S struct{}
+//   > ```
+//   documentation
 //   > Check that we don't panic
 //   > Copied from https://github.com/golang/go/issues/68877#issuecomment-2290000187
 //   ^ reference github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/U#
@@ -53,6 +73,10 @@
 //   display_name Z
 //   signature_documentation
 //   > type Z int32
+//   documentation
+//   > ```go
+//   > type Z int32
+//   > ```
 //   documentation
 //   > Check that we don't panic
 //   > Copied from https://github.com/golang/go/issues/68877#issuecomment-2290000187
@@ -65,6 +89,10 @@
 //       display_name f
 //       signature_documentation
 //       > func f(u U)
+//       documentation
+//       > ```go
+//       > func f(u U)
+//       > ```
 //       ^ definition local 0
 //         kind Variable
 //         display_name u

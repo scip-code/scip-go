@@ -15,6 +15,46 @@ import (
 	"golang.org/x/tools/go/packages"
 )
 
+// OriginFile returns the `//line`-adjusted source path for pos, cleaned.
+//
+// cgo (and any generated code carrying `//line` directives) is compiled from
+// files that the go command rewrites into the build cache -- e.g. a cgo file
+// `foo.go` becomes `foo.cgo1.go` under GOCACHE. `Fset.File(pos).Name()` returns
+// that physical cache path, but `Fset.Position(pos)` honors the `//line`
+// directives cgo emits and resolves back to the real `.go` source. Keying
+// documents by this origin keeps occurrences anchored to source the repo
+// actually contains, instead of an ephemeral cache path. For ordinary files the
+// origin is the file itself, so non-generated packages are unaffected.
+func OriginFile(pkg *packages.Package, pos token.Pos) string {
+	return CleanResolve(pkg.Fset.Position(pos).Filename)
+}
+
+// CleanResolve returns path with symlinks resolved and cleaned. Resolving
+// symlinks keeps `//line`-derived origins comparable to pkg.GoFiles even when a
+// module is reached through a symlinked directory (otherwise a real source file
+// could be dropped as "not a GoFile"). Falls back to Clean when the path can't
+// be resolved -- e.g. a `//line` target that names a file not on disk (a yacc
+// `.y` grammar, or a build-cache path) -- which then simply won't match any
+// GoFile and is dropped, as intended.
+func CleanResolve(path string) string {
+	if resolved, err := filepath.EvalSymlinks(path); err == nil {
+		return resolved
+	}
+	return filepath.Clean(path)
+}
+
+// RealGoFiles is the set of a package's on-disk source files (resolved paths).
+// An occurrence whose origin is not in this set comes from generated glue with
+// no real source (cgo's `_cgo_gotypes.go`, a yacc `.y`, compiler-inserted thunks
+// lacking a `//line`); it is dropped rather than mis-attributed.
+func RealGoFiles(pkg *packages.Package) map[string]struct{} {
+	set := make(map[string]struct{}, len(pkg.GoFiles))
+	for _, f := range pkg.GoFiles {
+		set[CleanResolve(f)] = struct{}{}
+	}
+	return set
+}
+
 func VisitPackageSyntax(
 	moduleRoot string,
 	pkg *packages.Package,
@@ -22,23 +62,28 @@ func VisitPackageSyntax(
 	globalSymbols *lookup.Global,
 ) {
 	pkgSymbols := lookup.NewPackageSymbols(pkg)
+	goFiles := RealGoFiles(pkg)
 	// Iterate over all the files, collect any global symbols
 	for _, f := range pkg.Syntax {
 
-		abs := pkg.Fset.File(f.Package).Name()
-		relative, _ := filepath.Rel(moduleRoot, abs)
+		origin := OriginFile(pkg, f.Package)
+		relative, _ := filepath.Rel(moduleRoot, origin)
 
-		doc := visitSyntax(pkg, pkgSymbols, f, relative)
-
-		// Save document for pass 2
-		pathToDocuments[abs] = doc
+		// Always visit to collect package-level symbols, but only keep a
+		// document for files that map to real source. Generated files (e.g.
+		// cgo's `_cgo_gotypes.go`) resolve to a non-source origin; their
+		// occurrences are compiler glue and must not become a document.
+		doc := visitSyntax(pkg, pkgSymbols, f, relative, origin)
+		if _, ok := goFiles[origin]; ok {
+			pathToDocuments[origin] = doc
+		}
 	}
 
 	globalSymbols.Add(pkgSymbols)
 }
 
-func visitSyntax(pkg *packages.Package, pkgSymbols *lookup.Package, f *ast.File, relative string) *document.Document {
-	doc := document.NewDocument(relative, pkg, pkgSymbols)
+func visitSyntax(pkg *packages.Package, pkgSymbols *lookup.Package, f *ast.File, relative, originAbs string) *document.Document {
+	doc := document.NewDocument(relative, originAbs, pkg, pkgSymbols)
 
 	// TODO: Maybe we should do this before? we have traverse all
 	// the fields first before, but now I think it's fine right here

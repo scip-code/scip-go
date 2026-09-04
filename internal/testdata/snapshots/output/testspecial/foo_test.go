@@ -8,6 +8,10 @@
 //                      display_name TestFoo_Whitebox
 //                      signature_documentation
 //                      > func TestFoo_Whitebox()
+//                      documentation
+//                      > ```go
+//                      > func TestFoo_Whitebox()
+//                      > ```
 //                          ^^^ reference 0.1.test `sg/testspecial`/Foo().
 //                                ⌃ enclosing_range_end 0.1.test `sg/testspecial`/TestFoo_Whitebox().
   

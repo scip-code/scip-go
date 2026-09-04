@@ -16,6 +16,10 @@
 //             display_name Example
 //             signature_documentation
 //             > func Example()
+//             documentation
+//             > ```go
+//             > func Example()
+//             > ```
    Println(h.CanonicalHeaderKey("accept-encoding"))
 // ^^^^^^^ reference github.com/golang/go/src go1.22 fmt/Println().
 //         ^ reference github.com/golang/go/src go1.22 `net/http`/

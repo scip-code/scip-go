@@ -4,6 +4,10 @@
 //              display_name pr218
 //              signature_documentation
 //              > package pr218
+//              documentation
+//              > ```go
+//              > package pr218
+//              > ```
   
   // Deprecated: Use NewGreeting instead.
   const OldGreeting = "hello"
@@ -12,6 +16,10 @@
 //                  display_name OldGreeting
 //                  signature_documentation
 //                  > const OldGreeting untyped string = "hello"
+//                  documentation
+//                  > ```go
+//                  > const OldGreeting untyped string = "hello"
+//                  > ```
 //                  documentation
 //                  > Deprecated: Use NewGreeting instead.
 //                  diagnostic Warning:
@@ -23,6 +31,10 @@
 //                  display_name NewGreeting
 //                  signature_documentation
 //                  > const NewGreeting untyped string = "hi"
+//                  documentation
+//                  > ```go
+//                  > const NewGreeting untyped string = "hi"
+//                  > ```
   
   // Deprecated: Use Add instead.
 //⌄ enclosing_range_start 0.1.test `sg/pr218`/OldAdd().
@@ -32,6 +44,10 @@
 //            display_name OldAdd
 //            signature_documentation
 //            > func OldAdd(a int, b int) int
+//            documentation
+//            > ```go
+//            > func OldAdd(a int, b int) int
+//            > ```
 //            documentation
 //            > Deprecated: Use Add instead.
 //            diagnostic Warning:
@@ -59,6 +75,10 @@
 //         display_name Add
 //         signature_documentation
 //         > func Add(a int, b int) int
+//         documentation
+//         > ```go
+//         > func Add(a int, b int) int
+//         > ```
 //         ^ definition local 2
 //           kind Variable
 //           display_name a
@@ -86,6 +106,13 @@
 //               >     Addr string
 //               > }
 //               documentation
+//               > ```go
+//               > type OldServer struct {
+//               >     Host string
+//               >     Addr string
+//               > }
+//               > ```
+//               documentation
 //               > Deprecated: Use Server instead.
 //               diagnostic Warning:
 //               > Deprecated
@@ -97,6 +124,10 @@
 //      signature_documentation
 //      > struct field Host string
 //      documentation
+//      > ```go
+//      > struct field Host string
+//      > ```
+//      documentation
 //      > Deprecated: Use Addr instead.
 //      diagnostic Warning:
 //      > Deprecated
@@ -106,6 +137,10 @@
 //      display_name Addr
 //      signature_documentation
 //      > struct field Addr string
+//      documentation
+//      > ```go
+//      > struct field Addr string
+//      > ```
   }
   
   type Server struct {
@@ -114,12 +149,20 @@
 //            display_name Server
 //            signature_documentation
 //            > type Server struct{ Addr string }
+//            documentation
+//            > ```go
+//            > type Server struct{ Addr string }
+//            > ```
    Addr string
 // ^^^^ definition 0.1.test `sg/pr218`/Server#Addr.
 //      kind Field
 //      display_name Addr
 //      signature_documentation
 //      > struct field Addr string
+//      documentation
+//      > ```go
+//      > struct field Addr string
+//      > ```
   }
   
 //⌄ enclosing_range_start 0.1.test `sg/pr218`/UseDeprecated().
@@ -129,6 +172,10 @@
 //                   display_name UseDeprecated
 //                   signature_documentation
 //                   > func UseDeprecated()
+//                   documentation
+//                   > ```go
+//                   > func UseDeprecated()
+//                   > ```
    _ = OldGreeting
 //     ^^^^^^^^^^^ reference 0.1.test `sg/pr218`/OldGreeting.
 //                 diagnostic Warning:

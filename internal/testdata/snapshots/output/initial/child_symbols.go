@@ -9,6 +9,10 @@
 //            signature_documentation
 //            > const Const untyped int = 5
 //            documentation
+//            > ```go
+//            > const Const untyped int = 5
+//            > ```
+//            documentation
 //            > Const is a constant equal to 5. It's the best constant I've ever written. 😹
   
   // Docs for the const block itself.
@@ -21,6 +25,10 @@
 //             signature_documentation
 //             > const ConstBlock1 untyped int = 1
 //             documentation
+//             > ```go
+//             > const ConstBlock1 untyped int = 1
+//             > ```
+//             documentation
 //             > ConstBlock1 is a constant in a block.
 //             documentation
 //             > Docs for the const block itself.
@@ -32,6 +40,10 @@
 //             display_name ConstBlock2
 //             signature_documentation
 //             > const ConstBlock2 untyped int = 2
+//             documentation
+//             > ```go
+//             > const ConstBlock2 untyped int = 2
+//             > ```
 //             documentation
 //             > ConstBlock2 is a constant in a block.
 //             documentation
@@ -46,6 +58,10 @@
 //        signature_documentation
 //        > var Var Interface
 //        documentation
+//        > ```go
+//        > var Var Interface
+//        > ```
+//        documentation
 //        > Var is a variable interface.
 //        ^^^^^^^^^ reference 0.1.test `sg/initial`/Interface#
 //                     ^^^^^^ reference 0.1.test `sg/initial`/Struct#
@@ -58,6 +74,10 @@
 //                  display_name unexportedVar
 //                  signature_documentation
 //                  > var unexportedVar Interface
+//                  documentation
+//                  > ```go
+//                  > var unexportedVar Interface
+//                  > ```
 //                  documentation
 //                  > unexportedVar is an unexported variable interface.
 //                  ^^^^^^^^^ reference 0.1.test `sg/initial`/Interface#
@@ -72,6 +92,10 @@
 //      signature_documentation
 //      > var x error
 //      documentation
+//      > ```go
+//      > var x error
+//      > ```
+//      documentation
 //      > x has a builtin error type
   
   var BigVar Interface = &Struct{
@@ -80,6 +104,10 @@
 //           display_name BigVar
 //           signature_documentation
 //           > var BigVar Interface
+//           documentation
+//           > ```go
+//           > var BigVar Interface
+//           > ```
 //           ^^^^^^^^^ reference 0.1.test `sg/initial`/Interface#
 //                        ^^^^^^ reference 0.1.test `sg/initial`/Struct#
    Field: "bar!",
@@ -92,18 +120,30 @@
 //         display_name FieldA
 //         signature_documentation
 //         > struct field FieldA int
+//         documentation
+//         > ```go
+//         > struct field FieldA int
+//         > ```
     FieldB int
 //  ^^^^^^ definition 0.1.test `sg/initial`/BigVar:FieldB.
 //         kind Field
 //         display_name FieldB
 //         signature_documentation
 //         > struct field FieldB int
+//         documentation
+//         > ```go
+//         > struct field FieldB int
+//         > ```
     FieldC int
 //  ^^^^^^ definition 0.1.test `sg/initial`/BigVar:FieldC.
 //         kind Field
 //         display_name FieldC
 //         signature_documentation
 //         > struct field FieldC int
+//         documentation
+//         > ```go
+//         > struct field FieldC int
+//         > ```
    }{FieldA: 1337},
 //   ^^^^^^ reference 0.1.test `sg/initial`/BigVar:FieldA.
   }
@@ -128,6 +168,10 @@
 //           signature_documentation
 //           > var VarBlock1 string
 //           documentation
+//           > ```go
+//           > var VarBlock1 string
+//           > ```
+//           documentation
 //           > This has some docs
 //           documentation
 //           > What are docs, really?
@@ -148,6 +192,10 @@
 //           display_name VarBlock2
 //           signature_documentation
 //           > var VarBlock2 string
+//           documentation
+//           > ```go
+//           > var VarBlock2 string
+//           > ```
 //           documentation
 //           > What are docs, really?
 //           > I can't say for sure, I don't write any.
@@ -173,6 +221,13 @@
 //              >     Field         string
 //              > }
 //              documentation
+//              > ```go
+//              > type Embedded struct {
+//              >     EmbeddedField string
+//              >     Field         string
+//              > }
+//              > ```
+//              documentation
 //              > Embedded is a struct, to be embedded in another struct.
    // EmbeddedField has some docs!
    EmbeddedField string
@@ -182,6 +237,10 @@
 //               signature_documentation
 //               > struct field EmbeddedField string
 //               documentation
+//               > ```go
+//               > struct field EmbeddedField string
+//               > ```
+//               documentation
 //               > EmbeddedField has some docs!
    Field         string // conflicts with parent "Field"
 // ^^^^^ definition 0.1.test `sg/initial`/Embedded#Field.
@@ -189,6 +248,10 @@
 //       display_name Field
 //       signature_documentation
 //       > struct field Field string
+//       documentation
+//       > ```go
+//       > struct field Field string
+//       > ```
 //       documentation
 //       > conflicts with parent "Field"
   }
@@ -207,6 +270,18 @@
 //            >         FieldC int
 //            >     }
 //            > }
+//            documentation
+//            > ```go
+//            > type Struct struct {
+//            >     *Embedded
+//            >     Field     string
+//            >     Anonymous struct {
+//            >         FieldA int
+//            >         FieldB int
+//            >         FieldC int
+//            >     }
+//            > }
+//            > ```
 //            relationship 0.1.test `sg/initial`/Interface# implementation
    *Embedded
 //  ^^^^^^^^ definition 0.1.test `sg/initial`/Struct#Embedded.
@@ -214,6 +289,10 @@
 //           display_name Embedded
 //           signature_documentation
 //           > struct field Embedded *Embedded
+//           documentation
+//           > ```go
+//           > struct field Embedded *Embedded
+//           > ```
 //  ^^^^^^^^ reference 0.1.test `sg/initial`/Embedded#
    Field     string
 // ^^^^^ definition 0.1.test `sg/initial`/Struct#Field.
@@ -221,30 +300,50 @@
 //       display_name Field
 //       signature_documentation
 //       > struct field Field string
+//       documentation
+//       > ```go
+//       > struct field Field string
+//       > ```
    Anonymous struct {
 // ^^^^^^^^^ definition 0.1.test `sg/initial`/Struct#Anonymous.
 //           kind Field
 //           display_name Anonymous
 //           signature_documentation
 //           > struct field Anonymous struct{FieldA int; FieldB int; FieldC int}
+//           documentation
+//           > ```go
+//           > struct field Anonymous struct{FieldA int; FieldB int; FieldC int}
+//           > ```
     FieldA int
 //  ^^^^^^ definition 0.1.test `sg/initial`/Struct#$anon_81475a76ba757de7#FieldA.
 //         kind Field
 //         display_name FieldA
 //         signature_documentation
 //         > struct field FieldA int
+//         documentation
+//         > ```go
+//         > struct field FieldA int
+//         > ```
     FieldB int
 //  ^^^^^^ definition 0.1.test `sg/initial`/Struct#$anon_81475a76ba757de7#FieldB.
 //         kind Field
 //         display_name FieldB
 //         signature_documentation
 //         > struct field FieldB int
+//         documentation
+//         > ```go
+//         > struct field FieldB int
+//         > ```
     FieldC int
 //  ^^^^^^ definition 0.1.test `sg/initial`/Struct#$anon_81475a76ba757de7#FieldC.
 //         kind Field
 //         display_name FieldC
 //         signature_documentation
 //         > struct field FieldC int
+//         documentation
+//         > ```go
+//         > struct field FieldC int
+//         > ```
    }
   }
   
@@ -263,6 +362,10 @@
 //                              signature_documentation
 //                              > func (*Struct).StructMethod()
 //                              documentation
+//                              > ```go
+//                              > func (*Struct).StructMethod()
+//                              > ```
+//                              documentation
 //                              > StructMethod has some docs!
 //                                 ⌃ enclosing_range_end 0.1.test `sg/initial`/Struct#StructMethod().
   
@@ -279,6 +382,10 @@
 //                                     display_name ImplementsInterface
 //                                     signature_documentation
 //                                     > func (*Struct).ImplementsInterface() string
+//                                     documentation
+//                                     > ```go
+//                                     > func (*Struct).ImplementsInterface() string
+//                                     > ```
 //                                     relationship 0.1.test `sg/initial`/Interface#ImplementsInterface. implementation
 //                                                             ⌃ enclosing_range_end 0.1.test `sg/initial`/Struct#ImplementsInterface().
   
@@ -295,6 +402,10 @@
 //                                 display_name MachineLearning
 //                                 signature_documentation
 //                                 > func (*Struct).MachineLearning(param1 float32, hyperparam2 float32, hyperparam3 float32) float32
+//                                 documentation
+//                                 > ```go
+//                                 > func (*Struct).MachineLearning(param1 float32, hyperparam2 float32, hyperparam3 float32) float32
+//                                 > ```
    param1 float32, // It's ML, I can't describe what this param is.
 // ^^^^^^ definition local 3
 //        kind Variable
@@ -386,6 +497,10 @@
 //               signature_documentation
 //               > type Interface interface{ ImplementsInterface() string }
 //               documentation
+//               > ```go
+//               > type Interface interface{ ImplementsInterface() string }
+//               > ```
+//               documentation
 //               > Interface has docs too
    ImplementsInterface() string
 // ^^^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/initial`/Interface#ImplementsInterface.
@@ -393,6 +508,10 @@
 //                     display_name ImplementsInterface
 //                     signature_documentation
 //                     > func (Interface).ImplementsInterface() string
+//                     documentation
+//                     > ```go
+//                     > func (Interface).ImplementsInterface() string
+//                     > ```
   }
   
 //⌄ enclosing_range_start 0.1.test `sg/initial`/NewInterface().
@@ -402,6 +521,10 @@
 //                  display_name NewInterface
 //                  signature_documentation
 //                  > func NewInterface() Interface
+//                  documentation
+//                  > ```go
+//                  > func NewInterface() Interface
+//                  > ```
 //                    ^^^^^^^^^ reference 0.1.test `sg/initial`/Interface#
 //                                           ⌃ enclosing_range_end 0.1.test `sg/initial`/NewInterface().
   
@@ -411,6 +534,10 @@
 //                      display_name SortExportedFirst
 //                      signature_documentation
 //                      > var SortExportedFirst int
+//                      documentation
+//                      > ```go
+//                      > var SortExportedFirst int
+//                      > ```
   
   var sortUnexportedSecond = 2
 //    ^^^^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/initial`/sortUnexportedSecond.
@@ -418,6 +545,10 @@
 //                         display_name sortUnexportedSecond
 //                         signature_documentation
 //                         > var sortUnexportedSecond int
+//                         documentation
+//                         > ```go
+//                         > var sortUnexportedSecond int
+//                         > ```
   
   var _sortUnderscoreLast = 3
 //    ^^^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/initial`/_sortUnderscoreLast.
@@ -425,6 +556,10 @@
 //                        display_name _sortUnderscoreLast
 //                        signature_documentation
 //                        > var _sortUnderscoreLast int
+//                        documentation
+//                        > ```go
+//                        > var _sortUnderscoreLast int
+//                        > ```
   
   // Yeah this is some Go magic incantation which is common.
   //
@@ -458,6 +593,10 @@
 //   signature_documentation
 //   > type X struct{ bar string }
 //   documentation
+//   > ```go
+//   > type X struct{ bar string }
+//   > ```
+//   documentation
 //   > And confusing
 //   documentation
 //   > Go can be fun
@@ -467,6 +606,10 @@
 //      display_name bar
 //      signature_documentation
 //      > struct field bar string
+//      documentation
+//      > ```go
+//      > struct field bar string
+//      > ```
    }
   
    Y struct {
@@ -476,6 +619,10 @@
 //   signature_documentation
 //   > type Y struct{ baz float64 }
 //   documentation
+//   > ```go
+//   > type Y struct{ baz float64 }
+//   > ```
+//   documentation
 //   > Go can be fun
     baz float64
 //  ^^^ definition 0.1.test `sg/initial`/Y#baz.
@@ -483,6 +630,10 @@
 //      display_name baz
 //      signature_documentation
 //      > struct field baz float64
+//      documentation
+//      > ```go
+//      > struct field baz float64
+//      > ```
    }
   )
   
