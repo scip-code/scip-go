@@ -48,7 +48,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ steps.app-token.outputs.token }}
 
-      - uses: DeterminateSystems/nix-installer-action@v22
+      - uses: DeterminateSystems/nix-installer-action@v23
         with:
           summarize: false
       - uses: DeterminateSystems/magic-nix-cache-action@v15
