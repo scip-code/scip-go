@@ -4,6 +4,10 @@
 //              display_name pr261
 //              signature_documentation
 //              > package pr261
+//              documentation
+//              > ```go
+//              > package pr261
+//              > ```
   
   import "sort"
 //        ^^^^ reference github.com/golang/go/src go1.22 sort/

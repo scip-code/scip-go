@@ -10,6 +10,10 @@
 //                           display_name localAnonymousStructs
 //                           signature_documentation
 //                           > func localAnonymousStructs()
+//                           documentation
+//                           > ```go
+//                           > func localAnonymousStructs()
+//                           > ```
    a := struct{ x int }{x: 1}
 // ^ definition local 0
 //   kind Variable
@@ -50,6 +54,10 @@
 //                          display_name paramAnonymousStruct
 //                          signature_documentation
 //                          > func paramAnonymousStruct(p struct{x int}) int
+//                          documentation
+//                          > ```go
+//                          > func paramAnonymousStruct(p struct{x int}) int
+//                          > ```
 //                          ^ definition local 4
 //                            kind Variable
 //                            display_name p

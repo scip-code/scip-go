@@ -8,6 +8,10 @@
 //            display_name Switch
 //            signature_documentation
 //            > func Switch(interfaceValue interface{}) bool
+//            documentation
+//            > ```go
+//            > func Switch(interfaceValue interface{}) bool
+//            > ```
 //            ^^^^^^^^^^^^^^ definition local 0
 //                           kind Variable
 //                           display_name interfaceValue

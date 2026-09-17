@@ -6,6 +6,10 @@
 //                             signature_documentation
 //                             > package packagedocumentation
 //                             documentation
+//                             > ```go
+//                             > package packagedocumentation
+//                             > ```
+//                             documentation
 //                             > This is documentation for this package.
   
 //⌄ enclosing_range_start github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/package-documentation`/Exported().
@@ -15,5 +19,9 @@
 //              display_name Exported
 //              signature_documentation
 //              > func Exported()
+//              documentation
+//              > ```go
+//              > func Exported()
+//              > ```
 //                 ⌃ enclosing_range_end github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/package-documentation`/Exported().
   

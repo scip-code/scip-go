@@ -10,6 +10,10 @@
 //               signature_documentation
 //               > type HoverTypeList struct{}
 //               documentation
+//               > ```go
+//               > type HoverTypeList struct{}
+//               > ```
+//               documentation
 //               > HoverTypeList is a cool struct
   )
   
@@ -20,6 +24,10 @@
 //               display_name HoverType
 //               signature_documentation
 //               > type HoverType struct{}
+//               documentation
+//               > ```go
+//               > type HoverType struct{}
+//               > ```
 //               documentation
 //               > This should show up as well
   

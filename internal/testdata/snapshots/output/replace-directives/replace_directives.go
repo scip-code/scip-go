@@ -4,6 +4,10 @@
 //                  display_name replacers
 //                  signature_documentation
 //                  > package replacers
+//                  documentation
+//                  > ```go
+//                  > package replacers
+//                  > ```
   
   import (
    "fmt"
@@ -21,6 +25,10 @@
 //               display_name Something
 //               signature_documentation
 //               > func Something()
+//               documentation
+//               > ```go
+//               > func Something()
+//               > ```
    fmt.Println(replaced.DefaultConfig)
 // ^^^ reference github.com/golang/go/src go1.22 fmt/
 //     ^^^^^^^ reference github.com/golang/go/src go1.22 fmt/Println().

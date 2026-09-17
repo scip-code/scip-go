@@ -12,6 +12,10 @@
 //                 display_name TestExample
 //                 signature_documentation
 //                 > func TestExample(t *testing.T)
+//                 documentation
+//                 > ```go
+//                 > func TestExample(t *testing.T)
+//                 > ```
 //                 ^ definition local 0
 //                   kind Variable
 //                   display_name t

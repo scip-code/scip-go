@@ -4,6 +4,10 @@
 //              display_name pr201
 //              signature_documentation
 //              > package pr201
+//              documentation
+//              > ```go
+//              > package pr201
+//              > ```
   
   import (
    "context"
@@ -32,6 +36,10 @@
 //                display_name UseImports
 //                signature_documentation
 //                > func UseImports()
+//                documentation
+//                > ```go
+//                > func UseImports()
+//                > ```
    fmt.Println(context.Background())
 // ^^^ reference github.com/golang/go/src go1.22 fmt/
 //     ^^^^^^^ reference github.com/golang/go/src go1.22 fmt/Println().

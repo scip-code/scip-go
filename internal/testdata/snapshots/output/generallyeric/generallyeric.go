@@ -6,6 +6,10 @@
 //                      signature_documentation
 //                      > package generallyeric
 //                      documentation
+//                      > ```go
+//                      > package generallyeric
+//                      > ```
+//                      documentation
 //                      > generallyeric -> generic for short
   
   import "fmt"
@@ -18,6 +22,10 @@
 //           display_name Print
 //           signature_documentation
 //           > func Print[T any](s []T)
+//           documentation
+//           > ```go
+//           > func Print[T any](s []T)
+//           > ```
 //           ^ definition local 0
 //             kind Interface
 //             display_name T

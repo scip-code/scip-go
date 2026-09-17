@@ -11,6 +11,10 @@
 //                     display_name TestExecRequest
 //                     signature_documentation
 //                     > func TestExecRequest(t *testing.T)
+//                     documentation
+//                     > ```go
+//                     > func TestExecRequest(t *testing.T)
+//                     > ```
 //                     ^ definition local 0
 //                       kind Variable
 //                       display_name t
@@ -31,6 +35,10 @@
 //            display_name runCmd
 //            signature_documentation
 //            > func runCmd(t *testing.T, dir string, cmd string, arg ...string)
+//            documentation
+//            > ```go
+//            > func runCmd(t *testing.T, dir string, cmd string, arg ...string)
+//            > ```
 //            ^ definition local 1
 //              kind Variable
 //              display_name t

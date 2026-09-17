@@ -17,6 +17,10 @@
 //                        signature_documentation
 //                        > type ParallelizableFunc func(ctx context.Context) error
 //                        documentation
+//                        > ```go
+//                        > type ParallelizableFunc func(ctx context.Context) error
+//                        > ```
+//                        documentation
 //                        > ParallelizableFunc is a function that can be called concurrently with other instances
 //                        > of this function type.
 //                             ^^^ definition local 0
@@ -36,6 +40,10 @@
 //              display_name Parallel
 //              signature_documentation
 //              > func Parallel(ctx context.Context, fns ...ParallelizableFunc) error
+//              documentation
+//              > ```go
+//              > func Parallel(ctx context.Context, fns ...ParallelizableFunc) error
+//              > ```
 //              documentation
 //              > Parallel invokes each of the given parallelizable functions in their own goroutines and
 //              > returns the first error to occur. This method will block until all goroutines have returned.

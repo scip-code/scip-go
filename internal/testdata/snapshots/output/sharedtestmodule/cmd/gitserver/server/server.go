@@ -8,5 +8,9 @@
 //                   display_name AnythingAtAll
 //                   signature_documentation
 //                   > func AnythingAtAll()
+//                   documentation
+//                   > ```go
+//                   > func AnythingAtAll()
+//                   > ```
 //                      ⌃ enclosing_range_end 0.1.test `sg/sharedtestmodule/cmd/gitserver/server`/AnythingAtAll().
   

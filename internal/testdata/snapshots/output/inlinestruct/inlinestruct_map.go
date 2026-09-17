@@ -7,4 +7,8 @@
 //             display_name testHook
 //             signature_documentation
 //             > var testHook func(map[string]string)
+//             documentation
+//             > ```go
+//             > var testHook func(map[string]string)
+//             > ```
   

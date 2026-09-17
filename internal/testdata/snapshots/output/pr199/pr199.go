@@ -9,5 +9,9 @@
 //              display_name FromMain
 //              signature_documentation
 //              > func FromMain()
+//              documentation
+//              > ```go
+//              > func FromMain()
+//              > ```
 //                 ⌃ enclosing_range_end 0.1.test `sg/pr199`/FromMain().
   

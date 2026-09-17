@@ -8,6 +8,10 @@
 //               display_name UsesLater
 //               signature_documentation
 //               > func UsesLater()
+//               documentation
+//               > ```go
+//               > func UsesLater()
+//               > ```
    DefinedLater()
 // ^^^^^^^^^^^^ reference 0.1.test `sg/initial`/DefinedLater().
   }
@@ -20,5 +24,9 @@
 //                  display_name DefinedLater
 //                  signature_documentation
 //                  > func DefinedLater()
+//                  documentation
+//                  > ```go
+//                  > func DefinedLater()
+//                  > ```
 //                     ⌃ enclosing_range_end 0.1.test `sg/initial`/DefinedLater().
   

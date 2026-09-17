@@ -4,6 +4,10 @@
 //              display_name pr206
 //              signature_documentation
 //              > package pr206
+//              documentation
+//              > ```go
+//              > package pr206
+//              > ```
   
   // Block doc for the const group.
   const (
@@ -15,6 +19,10 @@
 //             display_name BlockConst1
 //             signature_documentation
 //             > const BlockConst1 untyped int = 1
+//             documentation
+//             > ```go
+//             > const BlockConst1 untyped int = 1
+//             > ```
 //             documentation
 //             > BlockConst1 is a multi-line doc.
 //             > It spans two lines.
@@ -28,6 +36,10 @@
 //                 signature_documentation
 //                 > const BlockConstNoDoc untyped int = 2
 //                 documentation
+//                 > ```go
+//                 > const BlockConstNoDoc untyped int = 2
+//                 > ```
+//                 documentation
 //                 > Block doc for the const group.
   
    BlockConstTrailing = 3 // trailing comment on const
@@ -36,6 +48,10 @@
 //                    display_name BlockConstTrailing
 //                    signature_documentation
 //                    > const BlockConstTrailing untyped int = 3
+//                    documentation
+//                    > ```go
+//                    > const BlockConstTrailing untyped int = 3
+//                    > ```
 //                    documentation
 //                    > trailing comment on const
 //                    documentation
@@ -50,6 +66,10 @@
 //             display_name OrphanConst
 //             signature_documentation
 //             > const OrphanConst untyped int = 99
+//             documentation
+//             > ```go
+//             > const OrphanConst untyped int = 99
+//             > ```
 //             documentation
 //             > OrphanConst lives in a block with no block-level doc.
   )
