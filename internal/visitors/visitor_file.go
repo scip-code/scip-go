@@ -118,11 +118,11 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 		if node.Name != nil && node.Name.Name != "." && node.Name.Name != "_" {
 			if sym, ok := v.globalSymbols.GetPkgSymbol(importedPackage); ok {
 				v.newReference(sym, symbols.RangeFromName(
-					v.pkg.Fset.Position(node.Name.Pos()), node.Name.Name, false), false)
+					v.pkg.Fset.PositionFor(node.Name.Pos(), false), node.Name.Name, false), false)
 			}
 		}
 
-		position := v.pkg.Fset.Position(node.Path.Pos())
+		position := v.pkg.Fset.PositionFor(node.Path.Pos(), false)
 		v.emitImportReference(v.globalSymbols, position, importedPackage)
 
 		return nil
@@ -135,8 +135,8 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 			// compared to almost every other construct in the language.
 			switch sel := use.(type) {
 			case *types.PkgName:
-				startPosition := v.pkg.Fset.Position(ident.Pos())
-				endPosition := v.pkg.Fset.Position(ident.End())
+				startPosition := v.pkg.Fset.PositionFor(ident.Pos(), false)
+				endPosition := v.pkg.Fset.PositionFor(ident.End(), false)
 
 				packageID := newtypes.GetFromTypesPackage(sel.Imported())
 				sym, ok := v.globalSymbols.GetPkgSymbolByID(packageID)
@@ -188,8 +188,8 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 			return nil
 		}
 
-		startPosition := v.pkg.Fset.Position(node.Pos())
-		endPosition := v.pkg.Fset.Position(node.End())
+		startPosition := v.pkg.Fset.PositionFor(node.Pos(), false)
+		endPosition := v.pkg.Fset.PositionFor(node.End(), false)
 
 		// Short circuit on case clauses
 		if obj, ok := v.caseClauses[node.Pos()]; ok {
@@ -361,8 +361,8 @@ func (v *fileVisitor) enclosingRange(n *ast.Ident) *scip.Range {
 	if v.currentFuncDecl == nil || v.currentFuncDecl.Name != n {
 		return nil
 	}
-	startPosition := v.pkg.Fset.Position(v.currentFuncDecl.Pos())
-	endPosition := v.pkg.Fset.Position(v.currentFuncDecl.End())
+	startPosition := v.pkg.Fset.PositionFor(v.currentFuncDecl.Pos(), false)
+	endPosition := v.pkg.Fset.PositionFor(v.currentFuncDecl.End(), false)
 	rng := scipRange(startPosition, endPosition, v.pkg.TypesInfo.Defs[n])
 	return &rng
 }

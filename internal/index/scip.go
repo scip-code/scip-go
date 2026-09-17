@@ -233,7 +233,7 @@ func indexVisitPackages(
 
 			for _, f := range pkg.Syntax {
 				doc := pathToDocuments[pkg.Fset.File(f.Package).Name()]
-				position := pkg.Fset.Position(f.Name.NamePos)
+				position := pkg.Fset.PositionFor(f.Name.NamePos, false)
 
 				doc.PackageOccurrence = &scip.Occurrence{
 					TypedRange:  symbols.RangeFromName(position, f.Name.Name, false).AsTypedRange(),
