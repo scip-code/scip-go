@@ -3,6 +3,7 @@
   
   // Multi-name field declarations: a, b share a type and must be siblings.
   
+//⌄ enclosing_range_start 0.1.test `sg/pr202`/MultiNameStruct#
   type MultiNameStruct struct {
 //     ^^^^^^^^^^^^^^^ definition 0.1.test `sg/pr202`/MultiNameStruct#
 //                     kind Struct
@@ -18,6 +19,8 @@
 //                     >         y string
 //                     >     }
 //                     > }
+// ⌄ enclosing_range_start 0.1.test `sg/pr202`/MultiNameStruct#a.
+// ⌄ enclosing_range_start 0.1.test `sg/pr202`/MultiNameStruct#b.
    a, b struct {
 // ^ definition 0.1.test `sg/pr202`/MultiNameStruct#a.
 //   kind Field
@@ -29,20 +32,27 @@
 //      display_name b
 //      signature_documentation
 //      > struct field b struct{x int; y string}
+//  ⌄ enclosing_range_start 0.1.test `sg/pr202`/MultiNameStruct#$anon_c0a8952b3a214f68#x.
     x int
 //  ^ definition 0.1.test `sg/pr202`/MultiNameStruct#$anon_c0a8952b3a214f68#x.
 //    kind Field
 //    display_name x
 //    signature_documentation
 //    > struct field x int
+//      ⌃ enclosing_range_end 0.1.test `sg/pr202`/MultiNameStruct#$anon_c0a8952b3a214f68#x.
+//  ⌄ enclosing_range_start 0.1.test `sg/pr202`/MultiNameStruct#$anon_c0a8952b3a214f68#y.
     y string
 //  ^ definition 0.1.test `sg/pr202`/MultiNameStruct#$anon_c0a8952b3a214f68#y.
 //    kind Field
 //    display_name y
 //    signature_documentation
 //    > struct field y string
+//         ⌃ enclosing_range_end 0.1.test `sg/pr202`/MultiNameStruct#$anon_c0a8952b3a214f68#y.
    }
+// ⌃ enclosing_range_end 0.1.test `sg/pr202`/MultiNameStruct#a.
+// ⌃ enclosing_range_end 0.1.test `sg/pr202`/MultiNameStruct#b.
   }
+//⌃ enclosing_range_end 0.1.test `sg/pr202`/MultiNameStruct#
   
 //⌄ enclosing_range_start 0.1.test `sg/pr202`/useMultiNameFields().
   func useMultiNameFields() {

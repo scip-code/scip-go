@@ -4,6 +4,9 @@
   import "fmt"
 //        ^^^ reference github.com/golang/go/src go1.22 fmt/
   
+//⌄ enclosing_range_start 0.1.test `sg/initial`/MyStruct#
+//                      ⌄ enclosing_range_start 0.1.test `sg/initial`/MyStruct#f.
+//                      ⌄ enclosing_range_start 0.1.test `sg/initial`/MyStruct#y.
   type MyStruct struct{ f, y int }
 //     ^^^^^^^^ definition 0.1.test `sg/initial`/MyStruct#
 //              kind Struct
@@ -23,6 +26,9 @@
 //                           display_name y
 //                           signature_documentation
 //                           > struct field y int
+//                             ⌃ enclosing_range_end 0.1.test `sg/initial`/MyStruct#f.
+//                             ⌃ enclosing_range_end 0.1.test `sg/initial`/MyStruct#y.
+//                               ⌃ enclosing_range_end 0.1.test `sg/initial`/MyStruct#
   
 //⌄ enclosing_range_start 0.1.test `sg/initial`/MyStruct#RecvFunction().
   func (m MyStruct) RecvFunction(b int) int { return m.f + b }

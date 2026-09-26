@@ -5,6 +5,7 @@
 //             signature_documentation
 //             > package main
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata/cmd/minimal_main`/User#
   type User struct {
 //     ^^^^ definition 0.1.test `sg/testdata/cmd/minimal_main`/User#
 //          kind Struct
@@ -14,6 +15,8 @@
 //          >     Id   string
 //          >     Name string
 //          > }
+// ⌄ enclosing_range_start 0.1.test `sg/testdata/cmd/minimal_main`/User#Id.
+// ⌄ enclosing_range_start 0.1.test `sg/testdata/cmd/minimal_main`/User#Name.
    Id, Name string
 // ^^ definition 0.1.test `sg/testdata/cmd/minimal_main`/User#Id.
 //    kind Field
@@ -25,14 +28,19 @@
 //          display_name Name
 //          signature_documentation
 //          > struct field Name string
+//               ⌃ enclosing_range_end 0.1.test `sg/testdata/cmd/minimal_main`/User#Id.
+//               ⌃ enclosing_range_end 0.1.test `sg/testdata/cmd/minimal_main`/User#Name.
   }
+//⌃ enclosing_range_end 0.1.test `sg/testdata/cmd/minimal_main`/User#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata/cmd/minimal_main`/UserResource#
   type UserResource struct{}
 //     ^^^^^^^^^^^^ definition 0.1.test `sg/testdata/cmd/minimal_main`/UserResource#
 //                  kind Struct
 //                  display_name UserResource
 //                  signature_documentation
 //                  > type UserResource struct{}
+//                         ⌃ enclosing_range_end 0.1.test `sg/testdata/cmd/minimal_main`/UserResource#
   
 //⌄ enclosing_range_start 0.1.test `sg/testdata/cmd/minimal_main`/main().
   func main() {}

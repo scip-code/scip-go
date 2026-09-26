@@ -8,6 +8,7 @@
   import "github.com/example/dep"
 //        ^^^^^^^^^^^^^^^^^^^^^^ reference github.com/example/dep 0.1.test `github.com/example/dep`/
   
+//⌄ enclosing_range_start 0.1.test `sg/pr198`/Foo#
   // Foo is an interface defined downstream of the type that implements it.
   // The dep.T type (from a dependency) implements Foo, and scip-go should
   // emit an external symbol for dep.T with an IsImplementation relationship
@@ -23,13 +24,16 @@
 //         > The dep.T type (from a dependency) implements Foo, and scip-go should
 //         > emit an external symbol for dep.T with an IsImplementation relationship
 //         > pointing to Foo.
+// ⌄ enclosing_range_start 0.1.test `sg/pr198`/Foo#Bar.
    Bar()
 // ^^^ definition 0.1.test `sg/pr198`/Foo#Bar.
 //     kind MethodSpecification
 //     display_name Bar
 //     signature_documentation
 //     > func (Foo).Bar()
+//     ⌃ enclosing_range_end 0.1.test `sg/pr198`/Foo#Bar.
   }
+//⌃ enclosing_range_end 0.1.test `sg/pr198`/Foo#
   
 //⌄ enclosing_range_start 0.1.test `sg/pr198`/UseFoo().
   func UseFoo(f Foo) {}

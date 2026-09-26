@@ -1,6 +1,7 @@
   package initial
 //        ^^^^^^^ definition 0.1.test `sg/initial`/
   
+//⌄ enclosing_range_start 0.1.test `sg/initial`/Const.
   // Const is a constant equal to 5. It's the best constant I've ever written. 😹
   const Const = 5
 //      ^^^^^ definition 0.1.test `sg/initial`/Const.
@@ -10,9 +11,11 @@
 //            > const Const untyped int = 5
 //            documentation
 //            > Const is a constant equal to 5. It's the best constant I've ever written. 😹
+//              ⌃ enclosing_range_end 0.1.test `sg/initial`/Const.
   
   // Docs for the const block itself.
   const (
+// ⌄ enclosing_range_start 0.1.test `sg/initial`/ConstBlock1.
    // ConstBlock1 is a constant in a block.
    ConstBlock1 = 1
 // ^^^^^^^^^^^ definition 0.1.test `sg/initial`/ConstBlock1.
@@ -24,7 +27,9 @@
 //             > ConstBlock1 is a constant in a block.
 //             documentation
 //             > Docs for the const block itself.
+//               ⌃ enclosing_range_end 0.1.test `sg/initial`/ConstBlock1.
   
+// ⌄ enclosing_range_start 0.1.test `sg/initial`/ConstBlock2.
    // ConstBlock2 is a constant in a block.
    ConstBlock2 = 2
 // ^^^^^^^^^^^ definition 0.1.test `sg/initial`/ConstBlock2.
@@ -36,8 +41,10 @@
 //             > ConstBlock2 is a constant in a block.
 //             documentation
 //             > Docs for the const block itself.
+//               ⌃ enclosing_range_end 0.1.test `sg/initial`/ConstBlock2.
   )
   
+//⌄ enclosing_range_start 0.1.test `sg/initial`/Var.
   // Var is a variable interface.
   var Var Interface = &Struct{Field: "bar!"}
 //    ^^^ definition 0.1.test `sg/initial`/Var.
@@ -50,7 +57,9 @@
 //        ^^^^^^^^^ reference 0.1.test `sg/initial`/Interface#
 //                     ^^^^^^ reference 0.1.test `sg/initial`/Struct#
 //                            ^^^^^ reference 0.1.test `sg/initial`/Struct#Field.
+//                                         ⌃ enclosing_range_end 0.1.test `sg/initial`/Var.
   
+//⌄ enclosing_range_start 0.1.test `sg/initial`/unexportedVar.
   // unexportedVar is an unexported variable interface.
   var unexportedVar Interface = &Struct{Field: "bar!"}
 //    ^^^^^^^^^^^^^ definition 0.1.test `sg/initial`/unexportedVar.
@@ -63,7 +72,9 @@
 //                  ^^^^^^^^^ reference 0.1.test `sg/initial`/Interface#
 //                               ^^^^^^ reference 0.1.test `sg/initial`/Struct#
 //                                      ^^^^^ reference 0.1.test `sg/initial`/Struct#Field.
+//                                                   ⌃ enclosing_range_end 0.1.test `sg/initial`/unexportedVar.
   
+//⌄ enclosing_range_start 0.1.test `sg/initial`/x.
   // x has a builtin error type
   var x error
 //    ^ definition 0.1.test `sg/initial`/x.
@@ -73,7 +84,9 @@
 //      > var x error
 //      documentation
 //      > x has a builtin error type
+//          ⌃ enclosing_range_end 0.1.test `sg/initial`/x.
   
+//⌄ enclosing_range_start 0.1.test `sg/initial`/BigVar.
   var BigVar Interface = &Struct{
 //    ^^^^^^ definition 0.1.test `sg/initial`/BigVar.
 //           kind Variable
@@ -86,27 +99,34 @@
 // ^^^^^ reference 0.1.test `sg/initial`/Struct#Field.
    Anonymous: struct {
 // ^^^^^^^^^ reference 0.1.test `sg/initial`/Struct#Anonymous.
+//  ⌄ enclosing_range_start 0.1.test `sg/initial`/BigVar:FieldA.
     FieldA int
 //  ^^^^^^ definition 0.1.test `sg/initial`/BigVar:FieldA.
 //         kind Field
 //         display_name FieldA
 //         signature_documentation
 //         > struct field FieldA int
+//           ⌃ enclosing_range_end 0.1.test `sg/initial`/BigVar:FieldA.
+//  ⌄ enclosing_range_start 0.1.test `sg/initial`/BigVar:FieldB.
     FieldB int
 //  ^^^^^^ definition 0.1.test `sg/initial`/BigVar:FieldB.
 //         kind Field
 //         display_name FieldB
 //         signature_documentation
 //         > struct field FieldB int
+//           ⌃ enclosing_range_end 0.1.test `sg/initial`/BigVar:FieldB.
+//  ⌄ enclosing_range_start 0.1.test `sg/initial`/BigVar:FieldC.
     FieldC int
 //  ^^^^^^ definition 0.1.test `sg/initial`/BigVar:FieldC.
 //         kind Field
 //         display_name FieldC
 //         signature_documentation
 //         > struct field FieldC int
+//           ⌃ enclosing_range_end 0.1.test `sg/initial`/BigVar:FieldC.
    }{FieldA: 1337},
 //   ^^^^^^ reference 0.1.test `sg/initial`/BigVar:FieldA.
   }
+//⌃ enclosing_range_end 0.1.test `sg/initial`/BigVar.
   
   // What are docs, really?
   // I can't say for sure, I don't write any.
@@ -120,6 +140,7 @@
   // It's sleeping! Some people write that as `sleeping` but Markdown
   // isn't allowed in Go docstrings, right? right?!
   var (
+// ⌄ enclosing_range_start 0.1.test `sg/initial`/VarBlock1.
    // This has some docs
    VarBlock1 = "if you're reading this"
 // ^^^^^^^^^ definition 0.1.test `sg/initial`/VarBlock1.
@@ -141,7 +162,9 @@
 //           > 
 //           > It's sleeping! Some people write that as `sleeping` but Markdown
 //           > isn't allowed in Go docstrings, right? right?!
+//                                    ⌃ enclosing_range_end 0.1.test `sg/initial`/VarBlock1.
   
+// ⌄ enclosing_range_start 0.1.test `sg/initial`/VarBlock2.
    VarBlock2 = "hi"
 // ^^^^^^^^^ definition 0.1.test `sg/initial`/VarBlock2.
 //           kind Variable
@@ -160,8 +183,10 @@
 //           > 
 //           > It's sleeping! Some people write that as `sleeping` but Markdown
 //           > isn't allowed in Go docstrings, right? right?!
+//                ⌃ enclosing_range_end 0.1.test `sg/initial`/VarBlock2.
   )
   
+//⌄ enclosing_range_start 0.1.test `sg/initial`/Embedded#
   // Embedded is a struct, to be embedded in another struct.
   type Embedded struct {
 //     ^^^^^^^^ definition 0.1.test `sg/initial`/Embedded#
@@ -174,6 +199,7 @@
 //              > }
 //              documentation
 //              > Embedded is a struct, to be embedded in another struct.
+// ⌄ enclosing_range_start 0.1.test `sg/initial`/Embedded#EmbeddedField.
    // EmbeddedField has some docs!
    EmbeddedField string
 // ^^^^^^^^^^^^^ definition 0.1.test `sg/initial`/Embedded#EmbeddedField.
@@ -183,6 +209,8 @@
 //               > struct field EmbeddedField string
 //               documentation
 //               > EmbeddedField has some docs!
+//                    ⌃ enclosing_range_end 0.1.test `sg/initial`/Embedded#EmbeddedField.
+// ⌄ enclosing_range_start 0.1.test `sg/initial`/Embedded#Field.
    Field         string // conflicts with parent "Field"
 // ^^^^^ definition 0.1.test `sg/initial`/Embedded#Field.
 //       kind Field
@@ -191,8 +219,11 @@
 //       > struct field Field string
 //       documentation
 //       > conflicts with parent "Field"
+//                    ⌃ enclosing_range_end 0.1.test `sg/initial`/Embedded#Field.
   }
+//⌃ enclosing_range_end 0.1.test `sg/initial`/Embedded#
   
+//⌄ enclosing_range_start 0.1.test `sg/initial`/Struct#
   type Struct struct {
 //     ^^^^^^ definition 0.1.test `sg/initial`/Struct#
 //            kind Struct
@@ -208,6 +239,7 @@
 //            >     }
 //            > }
 //            relationship 0.1.test `sg/initial`/Interface# implementation
+// ⌄ enclosing_range_start 0.1.test `sg/initial`/Struct#Embedded.
    *Embedded
 //  ^^^^^^^^ definition 0.1.test `sg/initial`/Struct#Embedded.
 //           kind Field
@@ -215,38 +247,50 @@
 //           signature_documentation
 //           > struct field Embedded *Embedded
 //  ^^^^^^^^ reference 0.1.test `sg/initial`/Embedded#
+//         ⌃ enclosing_range_end 0.1.test `sg/initial`/Struct#Embedded.
+// ⌄ enclosing_range_start 0.1.test `sg/initial`/Struct#Field.
    Field     string
 // ^^^^^ definition 0.1.test `sg/initial`/Struct#Field.
 //       kind Field
 //       display_name Field
 //       signature_documentation
 //       > struct field Field string
+//                ⌃ enclosing_range_end 0.1.test `sg/initial`/Struct#Field.
+// ⌄ enclosing_range_start 0.1.test `sg/initial`/Struct#Anonymous.
    Anonymous struct {
 // ^^^^^^^^^ definition 0.1.test `sg/initial`/Struct#Anonymous.
 //           kind Field
 //           display_name Anonymous
 //           signature_documentation
 //           > struct field Anonymous struct{FieldA int; FieldB int; FieldC int}
+//  ⌄ enclosing_range_start 0.1.test `sg/initial`/Struct#$anon_81475a76ba757de7#FieldA.
     FieldA int
 //  ^^^^^^ definition 0.1.test `sg/initial`/Struct#$anon_81475a76ba757de7#FieldA.
 //         kind Field
 //         display_name FieldA
 //         signature_documentation
 //         > struct field FieldA int
+//           ⌃ enclosing_range_end 0.1.test `sg/initial`/Struct#$anon_81475a76ba757de7#FieldA.
+//  ⌄ enclosing_range_start 0.1.test `sg/initial`/Struct#$anon_81475a76ba757de7#FieldB.
     FieldB int
 //  ^^^^^^ definition 0.1.test `sg/initial`/Struct#$anon_81475a76ba757de7#FieldB.
 //         kind Field
 //         display_name FieldB
 //         signature_documentation
 //         > struct field FieldB int
+//           ⌃ enclosing_range_end 0.1.test `sg/initial`/Struct#$anon_81475a76ba757de7#FieldB.
+//  ⌄ enclosing_range_start 0.1.test `sg/initial`/Struct#$anon_81475a76ba757de7#FieldC.
     FieldC int
 //  ^^^^^^ definition 0.1.test `sg/initial`/Struct#$anon_81475a76ba757de7#FieldC.
 //         kind Field
 //         display_name FieldC
 //         signature_documentation
 //         > struct field FieldC int
+//           ⌃ enclosing_range_end 0.1.test `sg/initial`/Struct#$anon_81475a76ba757de7#FieldC.
    }
+// ⌃ enclosing_range_end 0.1.test `sg/initial`/Struct#Anonymous.
   }
+//⌃ enclosing_range_end 0.1.test `sg/initial`/Struct#
   
   // StructMethod has some docs!
 //⌄ enclosing_range_start 0.1.test `sg/initial`/Struct#StructMethod().
@@ -378,6 +422,7 @@
   }
 //⌃ enclosing_range_end 0.1.test `sg/initial`/Struct#MachineLearning().
   
+//⌄ enclosing_range_start 0.1.test `sg/initial`/Interface#
   // Interface has docs too
   type Interface interface {
 //     ^^^^^^^^^ definition 0.1.test `sg/initial`/Interface#
@@ -387,13 +432,16 @@
 //               > type Interface interface{ ImplementsInterface() string }
 //               documentation
 //               > Interface has docs too
+// ⌄ enclosing_range_start 0.1.test `sg/initial`/Interface#ImplementsInterface.
    ImplementsInterface() string
 // ^^^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/initial`/Interface#ImplementsInterface.
 //                     kind MethodSpecification
 //                     display_name ImplementsInterface
 //                     signature_documentation
 //                     > func (Interface).ImplementsInterface() string
+//                            ⌃ enclosing_range_end 0.1.test `sg/initial`/Interface#ImplementsInterface.
   }
+//⌃ enclosing_range_end 0.1.test `sg/initial`/Interface#
   
 //⌄ enclosing_range_start 0.1.test `sg/initial`/NewInterface().
   func NewInterface() Interface { return nil }
@@ -405,26 +453,32 @@
 //                    ^^^^^^^^^ reference 0.1.test `sg/initial`/Interface#
 //                                           ⌃ enclosing_range_end 0.1.test `sg/initial`/NewInterface().
   
+//⌄ enclosing_range_start 0.1.test `sg/initial`/SortExportedFirst.
   var SortExportedFirst = 1
 //    ^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/initial`/SortExportedFirst.
 //                      kind Variable
 //                      display_name SortExportedFirst
 //                      signature_documentation
 //                      > var SortExportedFirst int
+//                        ⌃ enclosing_range_end 0.1.test `sg/initial`/SortExportedFirst.
   
+//⌄ enclosing_range_start 0.1.test `sg/initial`/sortUnexportedSecond.
   var sortUnexportedSecond = 2
 //    ^^^^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/initial`/sortUnexportedSecond.
 //                         kind Variable
 //                         display_name sortUnexportedSecond
 //                         signature_documentation
 //                         > var sortUnexportedSecond int
+//                           ⌃ enclosing_range_end 0.1.test `sg/initial`/sortUnexportedSecond.
   
+//⌄ enclosing_range_start 0.1.test `sg/initial`/_sortUnderscoreLast.
   var _sortUnderscoreLast = 3
 //    ^^^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/initial`/_sortUnderscoreLast.
 //                        kind Variable
 //                        display_name _sortUnderscoreLast
 //                        signature_documentation
 //                        > var _sortUnderscoreLast int
+//                          ⌃ enclosing_range_end 0.1.test `sg/initial`/_sortUnderscoreLast.
   
   // Yeah this is some Go magic incantation which is common.
   //
@@ -450,6 +504,7 @@
   
   // Go can be fun
   type (
+// ⌄ enclosing_range_start 0.1.test `sg/initial`/X#
    // And confusing
    X struct {
 // ^ definition 0.1.test `sg/initial`/X#
@@ -461,14 +516,18 @@
 //   > And confusing
 //   documentation
 //   > Go can be fun
+//  ⌄ enclosing_range_start 0.1.test `sg/initial`/X#bar.
     bar string
 //  ^^^ definition 0.1.test `sg/initial`/X#bar.
 //      kind Field
 //      display_name bar
 //      signature_documentation
 //      > struct field bar string
+//           ⌃ enclosing_range_end 0.1.test `sg/initial`/X#bar.
    }
+// ⌃ enclosing_range_end 0.1.test `sg/initial`/X#
   
+// ⌄ enclosing_range_start 0.1.test `sg/initial`/Y#
    Y struct {
 // ^ definition 0.1.test `sg/initial`/Y#
 //   kind Struct
@@ -477,12 +536,15 @@
 //   > type Y struct{ baz float64 }
 //   documentation
 //   > Go can be fun
+//  ⌄ enclosing_range_start 0.1.test `sg/initial`/Y#baz.
     baz float64
 //  ^^^ definition 0.1.test `sg/initial`/Y#baz.
 //      kind Field
 //      display_name baz
 //      signature_documentation
 //      > struct field baz float64
+//            ⌃ enclosing_range_end 0.1.test `sg/initial`/Y#baz.
    }
+// ⌃ enclosing_range_end 0.1.test `sg/initial`/Y#
   )
   

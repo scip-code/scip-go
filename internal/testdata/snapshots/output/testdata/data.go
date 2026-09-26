@@ -9,6 +9,7 @@
 //  ^^^^^^^^^^^^^^^^^^^^^^^^^^^ reference 0.1.test `sg/testdata/internal/secret`/
   )
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/TestInterface#
   // TestInterface is an interface used for testing.
   type TestInterface interface {
 //     ^^^^^^^^^^^^^ definition 0.1.test `sg/testdata`/TestInterface#
@@ -20,6 +21,7 @@
 //                   > }
 //                   documentation
 //                   > TestInterface is an interface used for testing.
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestInterface#Do.
    // Do does a test thing.
    Do(ctx context.Context, data string) (score int, _ error)
 // ^^ definition 0.1.test `sg/testdata`/TestInterface#Do.
@@ -46,9 +48,12 @@
 //                                             display_name score
 //                                             signature_documentation
 //                                             > var score int
+//                                                         ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestInterface#Do.
   }
+//⌃ enclosing_range_end 0.1.test `sg/testdata`/TestInterface#
   
   type (
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestStruct#
    // TestStruct is a struct used for testing.
    TestStruct struct {
 // ^^^^^^^^^^ definition 0.1.test `sg/testdata`/TestStruct#
@@ -69,6 +74,7 @@
 //            > }
 //            documentation
 //            > TestStruct is a struct used for testing.
+//  ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestStruct#SimpleA.
     // SimpleA docs
     SimpleA int
 //  ^^^^^^^ definition 0.1.test `sg/testdata`/TestStruct#SimpleA.
@@ -78,6 +84,8 @@
 //          > struct field SimpleA int
 //          documentation
 //          > SimpleA docs
+//            ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestStruct#SimpleA.
+//  ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestStruct#SimpleB.
     // SimpleB docs
     SimpleB int
 //  ^^^^^^^ definition 0.1.test `sg/testdata`/TestStruct#SimpleB.
@@ -87,6 +95,8 @@
 //          > struct field SimpleB int
 //          documentation
 //          > SimpleB docs
+//            ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestStruct#SimpleB.
+//  ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestStruct#SimpleC.
     // SimpleC docs
     SimpleC int
 //  ^^^^^^^ definition 0.1.test `sg/testdata`/TestStruct#SimpleC.
@@ -96,31 +106,40 @@
 //          > struct field SimpleC int
 //          documentation
 //          > SimpleC docs
+//            ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestStruct#SimpleC.
   
+//  ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestStruct#FieldWithTag.
     FieldWithTag           string `json:"tag"`
 //  ^^^^^^^^^^^^ definition 0.1.test `sg/testdata`/TestStruct#FieldWithTag.
 //               kind Field
 //               display_name FieldWithTag
 //               signature_documentation
 //               > struct field FieldWithTag string
+//                                           ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestStruct#FieldWithTag.
+//  ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestStruct#FieldWithAnonymousType.
     FieldWithAnonymousType struct {
 //  ^^^^^^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/testdata`/TestStruct#FieldWithAnonymousType.
 //                         kind Field
 //                         display_name FieldWithAnonymousType
 //                         signature_documentation
 //                         > struct field FieldWithAnonymousType struct{NestedA string; NestedB string; NestedC string}
+//   ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestStruct#$anon_2bed88e490dc48af#NestedA.
      NestedA string
 //   ^^^^^^^ definition 0.1.test `sg/testdata`/TestStruct#$anon_2bed88e490dc48af#NestedA.
 //           kind Field
 //           display_name NestedA
 //           signature_documentation
 //           > struct field NestedA string
+//                ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestStruct#$anon_2bed88e490dc48af#NestedA.
+//   ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestStruct#$anon_2bed88e490dc48af#NestedB.
      NestedB string
 //   ^^^^^^^ definition 0.1.test `sg/testdata`/TestStruct#$anon_2bed88e490dc48af#NestedB.
 //           kind Field
 //           display_name NestedB
 //           signature_documentation
 //           > struct field NestedB string
+//                ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestStruct#$anon_2bed88e490dc48af#NestedB.
+//   ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestStruct#$anon_2bed88e490dc48af#NestedC.
      // NestedC docs
      NestedC string
 //   ^^^^^^^ definition 0.1.test `sg/testdata`/TestStruct#$anon_2bed88e490dc48af#NestedC.
@@ -130,24 +149,32 @@
 //           > struct field NestedC string
 //           documentation
 //           > NestedC docs
+//                ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestStruct#$anon_2bed88e490dc48af#NestedC.
     }
+//  ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestStruct#FieldWithAnonymousType.
   
+//  ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestStruct#EmptyStructField.
     EmptyStructField struct{}
 //  ^^^^^^^^^^^^^^^^ definition 0.1.test `sg/testdata`/TestStruct#EmptyStructField.
 //                   kind Field
 //                   display_name EmptyStructField
 //                   signature_documentation
 //                   > struct field EmptyStructField struct{}
+//                          ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestStruct#EmptyStructField.
    }
+// ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestStruct#
   
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestEmptyStruct#
    TestEmptyStruct struct{}
 // ^^^^^^^^^^^^^^^ definition 0.1.test `sg/testdata`/TestEmptyStruct#
 //                 kind Struct
 //                 display_name TestEmptyStruct
 //                 signature_documentation
 //                 > type TestEmptyStruct struct{}
+//                        ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestEmptyStruct#
   )
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/Score.
   // Score is just a hardcoded number.
   const Score = uint64(42)
 //      ^^^^^ definition 0.1.test `sg/testdata`/Score.
@@ -157,6 +184,8 @@
 //            > const Score uint64 = 42
 //            documentation
 //            > Score is just a hardcoded number.
+//                       ⌃ enclosing_range_end 0.1.test `sg/testdata`/Score.
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/secretScore.
   const secretScore = secret.SecretScore
 //      ^^^^^^^^^^^ definition 0.1.test `sg/testdata`/secretScore.
 //                  kind Constant
@@ -165,33 +194,43 @@
 //                  > const secretScore uint64 = 43
 //                    ^^^^^^ reference 0.1.test `sg/testdata/internal/secret`/
 //                           ^^^^^^^^^^^ reference 0.1.test `sg/testdata/internal/secret`/SecretScore.
+//                                     ⌃ enclosing_range_end 0.1.test `sg/testdata`/secretScore.
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/SomeString.
   const SomeString = "foobar"
 //      ^^^^^^^^^^ definition 0.1.test `sg/testdata`/SomeString.
 //                 kind Constant
 //                 display_name SomeString
 //                 signature_documentation
 //                 > const SomeString untyped string = "foobar"
+//                          ⌃ enclosing_range_end 0.1.test `sg/testdata`/SomeString.
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/LongString.
   const LongString = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidunt viverra aliquam. Phasellus finibus, arcu eu commodo porta, dui quam dictum ante, nec porta enim leo quis felis. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Curabitur luctus orci tortor, non condimentum arcu bibendum ut. Proin sit amet vulputate lorem, ut egestas arcu. Curabitur quis sagittis mi. Aenean elit sem, imperdiet ut risus eget, varius varius erat.\nNullam lobortis tortor sed sodales consectetur. Aenean condimentum vehicula elit, eget interdum ante finibus nec. Mauris mollis, nulla eu vehicula rhoncus, eros lectus viverra tellus, ac hendrerit quam massa et felis. Nunc vestibulum diam a facilisis sollicitudin. Aenean nec varius metus. Sed nec diam nibh. Ut erat erat, suscipit et ante eget, tincidunt condimentum orci. Aenean nec facilisis augue, ac sodales ex. Nulla dictum hendrerit tempus. Aliquam fringilla tortor in massa molestie, quis bibendum nulla ullamcorper. Suspendisse congue laoreet elit, vitae consectetur orci facilisis non. Aliquam tempus ultricies sapien, rhoncus tincidunt nisl tincidunt eget. Aliquam nisi ante, rutrum eget viverra imperdiet, congue ut nunc. Donec mollis sed tellus vel placerat. Sed mi ex, fringilla a fermentum a, tincidunt eget lectus.\nPellentesque lacus nibh, accumsan eget feugiat nec, gravida eget urna. Donec quam velit, imperdiet in consequat eget, ultricies eget nunc. Curabitur interdum vel sem et euismod. Donec sed vulputate odio, sit amet bibendum tellus. Integer pellentesque nunc eu turpis cursus, vestibulum sodales ipsum posuere. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Ut at vestibulum sapien. In hac habitasse platea dictumst. Nullam sed lobortis urna, non bibendum ipsum. Sed in sapien quis purus semper fringilla. Integer ut egestas nulla, eu ornare lectus. Maecenas quis sapien condimentum, dignissim urna quis, hendrerit neque. Donec cursus sit amet metus eu mollis.\nSed scelerisque vitae odio non egestas. Cras hendrerit tortor mauris. Aenean quis imperdiet nulla, a viverra purus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Praesent finibus faucibus orci, sed ultrices justo iaculis ut. Ut libero massa, condimentum at elit non, fringilla iaculis quam. Sed sit amet ipsum placerat, tincidunt sem in, efficitur lacus. Curabitur ligula orci, tempus ut magna eget, sodales tristique odio.\nPellentesque in libero ac risus pretium ultrices. In hac habitasse platea dictumst. Curabitur a quam sed orci tempus luctus. Integer commodo nec odio quis consequat. Aenean vitae dapibus augue, nec dictum lectus. Etiam sit amet leo diam. Duis eu ligula venenatis, fermentum lacus vel, interdum odio. Vivamus sit amet libero vitae elit interdum cursus et eu erat. Cras interdum augue sit amet ex aliquet tempor. Praesent dolor nisl, convallis bibendum mauris a, euismod commodo ante. Phasellus non ipsum condimentum, molestie dolor quis, pretium nisi. Mauris augue urna, fermentum ut lacinia a, efficitur vitae odio. Praesent finibus nisl et dolor luctus faucibus. Donec eget lectus sed mi porttitor placerat ac eu odio."
 //      ^^^^^^^^^^ definition 0.1.test `sg/testdata`/LongString.
 //                 kind Constant
 //                 display_name LongString
 //                 signature_documentation
 //                 > const LongString untyped string = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed tincidu...
+//                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  ⌃ enclosing_range_end 0.1.test `sg/testdata`/LongString.
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/ConstMath.
   const ConstMath = 1 + (2+3)*5
 //      ^^^^^^^^^ definition 0.1.test `sg/testdata`/ConstMath.
 //                kind Constant
 //                display_name ConstMath
 //                signature_documentation
 //                > const ConstMath untyped int = 26
+//                            ⌃ enclosing_range_end 0.1.test `sg/testdata`/ConstMath.
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/StringAlias#
   type StringAlias string
 //     ^^^^^^^^^^^ definition 0.1.test `sg/testdata`/StringAlias#
 //                 kind Type
 //                 display_name StringAlias
 //                 signature_documentation
 //                 > type StringAlias string
+//                      ⌃ enclosing_range_end 0.1.test `sg/testdata`/StringAlias#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/AliasedString.
   const AliasedString StringAlias = "foobar"
 //      ^^^^^^^^^^^^^ definition 0.1.test `sg/testdata`/AliasedString.
 //                    kind Constant
@@ -199,6 +238,7 @@
 //                    signature_documentation
 //                    > const AliasedString StringAlias = "foobar"
 //                    ^^^^^^^^^^^ reference 0.1.test `sg/testdata`/StringAlias#
+//                                         ⌃ enclosing_range_end 0.1.test `sg/testdata`/AliasedString.
   
   // Doer is similar to the test interface (but not the same).
 //⌄ enclosing_range_start 0.1.test `sg/testdata`/TestStruct#Doer().
@@ -243,6 +283,7 @@
   }
 //⌃ enclosing_range_end 0.1.test `sg/testdata`/TestStruct#Doer().
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/StructTagRegression#
   // StructTagRegression is a struct that caused panic in the wild. Added here to
   // support a regression test.
   //
@@ -260,34 +301,43 @@
 //                         > support a regression test.
 //                         > 
 //                         > See https://github.com/tal-tech/go-zero/blob/11dd3d75ecceaa3f5772024fb3f26dec1ada8e9c/core/mapping/unmarshaler_test.go#L2272.
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/StructTagRegression#Value.
    Value int `key:",range=[:}"`
 // ^^^^^ definition 0.1.test `sg/testdata`/StructTagRegression#Value.
 //       kind Field
 //       display_name Value
 //       signature_documentation
 //       > struct field Value int
+//                            ⌃ enclosing_range_end 0.1.test `sg/testdata`/StructTagRegression#Value.
   }
+//⌃ enclosing_range_end 0.1.test `sg/testdata`/StructTagRegression#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/TestEqualsStruct#
   type TestEqualsStruct = struct {
 //     ^^^^^^^^^^^^^^^^ definition 0.1.test `sg/testdata`/TestEqualsStruct#
 //                      kind TypeAlias
 //                      display_name TestEqualsStruct
 //                      signature_documentation
 //                      > type TestEqualsStruct = struct{ Value int }
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/TestEqualsStruct#Value.
    Value int
 // ^^^^^ definition 0.1.test `sg/testdata`/TestEqualsStruct#Value.
 //       kind Field
 //       display_name Value
 //       signature_documentation
 //       > struct field Value int
+//         ⌃ enclosing_range_end 0.1.test `sg/testdata`/TestEqualsStruct#Value.
   }
+//⌃ enclosing_range_end 0.1.test `sg/testdata`/TestEqualsStruct#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/ShellStruct#
   type ShellStruct struct {
 //     ^^^^^^^^^^^ definition 0.1.test `sg/testdata`/ShellStruct#
 //                 kind Struct
 //                 display_name ShellStruct
 //                 signature_documentation
 //                 > type ShellStruct struct{ InnerStruct }
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/ShellStruct#InnerStruct.
    // Ensure this field comes before the definition
    // so that we grab the correct one in our unit
    // tests.
@@ -302,12 +352,16 @@
 //             > so that we grab the correct one in our unit
 //             > tests.
 // ^^^^^^^^^^^ reference 0.1.test `sg/testdata`/InnerStruct#
+//           ⌃ enclosing_range_end 0.1.test `sg/testdata`/ShellStruct#InnerStruct.
   }
+//⌃ enclosing_range_end 0.1.test `sg/testdata`/ShellStruct#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/InnerStruct#
   type InnerStruct struct{}
 //     ^^^^^^^^^^^ definition 0.1.test `sg/testdata`/InnerStruct#
 //                 kind Struct
 //                 display_name InnerStruct
 //                 signature_documentation
 //                 > type InnerStruct struct{}
+//                        ⌃ enclosing_range_end 0.1.test `sg/testdata`/InnerStruct#
   

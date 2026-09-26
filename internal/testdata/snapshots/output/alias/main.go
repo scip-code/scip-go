@@ -8,6 +8,7 @@
   // Check that we don't panic
   // Copied from https://github.com/golang/go/issues/68877#issuecomment-2290000187
   type (
+// ⌄ enclosing_range_start github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/T#
    T struct{}
 // ^ definition github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/T#
 //   kind Struct
@@ -17,6 +18,8 @@
 //   documentation
 //   > Check that we don't panic
 //   > Copied from https://github.com/golang/go/issues/68877#issuecomment-2290000187
+//          ⌃ enclosing_range_end github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/T#
+// ⌄ enclosing_range_start github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/U#
    U = T
 // ^ definition github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/U#
 //   kind TypeAlias
@@ -27,6 +30,8 @@
 //   > Check that we don't panic
 //   > Copied from https://github.com/golang/go/issues/68877#issuecomment-2290000187
 //     ^ reference github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/T#
+//     ⌃ enclosing_range_end github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/U#
+// ⌄ enclosing_range_start github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/V#
    V = U
 // ^ definition github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/V#
 //   kind TypeAlias
@@ -37,6 +42,8 @@
 //   > Check that we don't panic
 //   > Copied from https://github.com/golang/go/issues/68877#issuecomment-2290000187
 //     ^ reference github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/U#
+//     ⌃ enclosing_range_end github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/V#
+// ⌄ enclosing_range_start github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/S#
    S U
 // ^ definition github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/S#
 //   kind Struct
@@ -47,6 +54,8 @@
 //   > Check that we don't panic
 //   > Copied from https://github.com/golang/go/issues/68877#issuecomment-2290000187
 //   ^ reference github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/U#
+//   ⌃ enclosing_range_end github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/S#
+// ⌄ enclosing_range_start github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/Z#
    Z int32
 // ^ definition github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/Z#
 //   kind Type
@@ -56,6 +65,7 @@
 //   documentation
 //   > Check that we don't panic
 //   > Copied from https://github.com/golang/go/issues/68877#issuecomment-2290000187
+//       ⌃ enclosing_range_end github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/Z#
   )
   
 //⌄ enclosing_range_start github.com/scip-code/scip-go 0.1.test `github.com/scip-code/scip-go/internal/testdata/snapshots/input/alias`/f().

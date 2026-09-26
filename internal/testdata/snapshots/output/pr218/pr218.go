@@ -5,6 +5,7 @@
 //              signature_documentation
 //              > package pr218
   
+//⌄ enclosing_range_start 0.1.test `sg/pr218`/OldGreeting.
   // Deprecated: Use NewGreeting instead.
   const OldGreeting = "hello"
 //      ^^^^^^^^^^^ definition 0.1.test `sg/pr218`/OldGreeting.
@@ -16,13 +17,16 @@
 //                  > Deprecated: Use NewGreeting instead.
 //                  diagnostic Warning:
 //                  > Deprecated
+//                          ⌃ enclosing_range_end 0.1.test `sg/pr218`/OldGreeting.
   
+//⌄ enclosing_range_start 0.1.test `sg/pr218`/NewGreeting.
   const NewGreeting = "hi"
 //      ^^^^^^^^^^^ definition 0.1.test `sg/pr218`/NewGreeting.
 //                  kind Constant
 //                  display_name NewGreeting
 //                  signature_documentation
 //                  > const NewGreeting untyped string = "hi"
+//                       ⌃ enclosing_range_end 0.1.test `sg/pr218`/NewGreeting.
   
   // Deprecated: Use Add instead.
 //⌄ enclosing_range_start 0.1.test `sg/pr218`/OldAdd().
@@ -75,6 +79,7 @@
   }
 //⌃ enclosing_range_end 0.1.test `sg/pr218`/Add().
   
+//⌄ enclosing_range_start 0.1.test `sg/pr218`/OldServer#
   // Deprecated: Use Server instead.
   type OldServer struct {
 //     ^^^^^^^^^ definition 0.1.test `sg/pr218`/OldServer#
@@ -89,6 +94,7 @@
 //               > Deprecated: Use Server instead.
 //               diagnostic Warning:
 //               > Deprecated
+// ⌄ enclosing_range_start 0.1.test `sg/pr218`/OldServer#Host.
    // Deprecated: Use Addr instead.
    Host string
 // ^^^^ definition 0.1.test `sg/pr218`/OldServer#Host.
@@ -100,27 +106,35 @@
 //      > Deprecated: Use Addr instead.
 //      diagnostic Warning:
 //      > Deprecated
+//           ⌃ enclosing_range_end 0.1.test `sg/pr218`/OldServer#Host.
+// ⌄ enclosing_range_start 0.1.test `sg/pr218`/OldServer#Addr.
    Addr string
 // ^^^^ definition 0.1.test `sg/pr218`/OldServer#Addr.
 //      kind Field
 //      display_name Addr
 //      signature_documentation
 //      > struct field Addr string
+//           ⌃ enclosing_range_end 0.1.test `sg/pr218`/OldServer#Addr.
   }
+//⌃ enclosing_range_end 0.1.test `sg/pr218`/OldServer#
   
+//⌄ enclosing_range_start 0.1.test `sg/pr218`/Server#
   type Server struct {
 //     ^^^^^^ definition 0.1.test `sg/pr218`/Server#
 //            kind Struct
 //            display_name Server
 //            signature_documentation
 //            > type Server struct{ Addr string }
+// ⌄ enclosing_range_start 0.1.test `sg/pr218`/Server#Addr.
    Addr string
 // ^^^^ definition 0.1.test `sg/pr218`/Server#Addr.
 //      kind Field
 //      display_name Addr
 //      signature_documentation
 //      > struct field Addr string
+//           ⌃ enclosing_range_end 0.1.test `sg/pr218`/Server#Addr.
   }
+//⌃ enclosing_range_end 0.1.test `sg/pr218`/Server#
   
 //⌄ enclosing_range_start 0.1.test `sg/pr218`/UseDeprecated().
   func UseDeprecated() {

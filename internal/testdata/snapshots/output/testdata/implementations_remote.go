@@ -4,6 +4,7 @@
   import "net/http"
 //        ^^^^^^^^ reference github.com/golang/go/src go1.22 `net/http`/
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/implementsWriter#
   type implementsWriter struct{}
 //     ^^^^^^^^^^^^^^^^ definition 0.1.test `sg/testdata`/implementsWriter#
 //                      kind Struct
@@ -12,6 +13,7 @@
 //                      > type implementsWriter struct{}
 //                      relationship github.com/golang/go/src go1.22 `net/http`/ResponseWriter# implementation
 //                      relationship github.com/golang/go/src go1.22 io/Writer# implementation
+//                             ⌃ enclosing_range_end 0.1.test `sg/testdata`/implementsWriter#
   
 //⌄ enclosing_range_start 0.1.test `sg/testdata`/implementsWriter#Header().
   func (implementsWriter) Header() http.Header        { panic("Just for how") }

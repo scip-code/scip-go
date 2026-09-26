@@ -109,6 +109,9 @@ func TestSnapshots(t *testing.T) {
 func assertTypedOccurrenceRanges(t *testing.T, scipIndex *scip.Index) {
 	t.Helper()
 	for _, doc := range scipIndex.Documents {
+		if doc.PositionEncoding != scip.PositionEncoding_UTF8CodeUnitOffsetFromLineStart {
+			t.Fatalf("%s: position encoding = %v; want UTF-8 bytes", doc.RelativePath, doc.PositionEncoding)
+		}
 		for i, occ := range doc.Occurrences {
 			if occ == nil {
 				t.Fatalf("%s: nil occurrence at index %d", doc.RelativePath, i)

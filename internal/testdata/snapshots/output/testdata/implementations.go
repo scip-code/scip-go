@@ -1,41 +1,52 @@
   package testdata
 //        ^^^^^^^^ definition 0.1.test `sg/testdata`/
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/I0#
   type I0 interface{}
 //     ^^ definition 0.1.test `sg/testdata`/I0#
 //        kind Interface
 //        display_name I0
 //        signature_documentation
 //        > type I0 interface{}
+//                  ⌃ enclosing_range_end 0.1.test `sg/testdata`/I0#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/I1#
   type I1 interface {
 //     ^^ definition 0.1.test `sg/testdata`/I1#
 //        kind Interface
 //        display_name I1
 //        signature_documentation
 //        > type I1 interface{ F1() }
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/I1#F1.
    F1()
 // ^^ definition 0.1.test `sg/testdata`/I1#F1.
 //    kind MethodSpecification
 //    display_name F1
 //    signature_documentation
 //    > func (I1).F1()
+//    ⌃ enclosing_range_end 0.1.test `sg/testdata`/I1#F1.
   }
+//⌃ enclosing_range_end 0.1.test `sg/testdata`/I1#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/I2#
   type I2 interface {
 //     ^^ definition 0.1.test `sg/testdata`/I2#
 //        kind Interface
 //        display_name I2
 //        signature_documentation
 //        > type I2 interface{ F2() }
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/I2#F2.
    F2()
 // ^^ definition 0.1.test `sg/testdata`/I2#F2.
 //    kind MethodSpecification
 //    display_name F2
 //    signature_documentation
 //    > func (I2).F2()
+//    ⌃ enclosing_range_end 0.1.test `sg/testdata`/I2#F2.
   }
+//⌃ enclosing_range_end 0.1.test `sg/testdata`/I2#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/T1#
   type T1 int
 //     ^^ definition 0.1.test `sg/testdata`/T1#
 //        kind Type
@@ -43,6 +54,7 @@
 //        signature_documentation
 //        > type T1 int
 //        relationship 0.1.test `sg/testdata`/I1# implementation
+//          ⌃ enclosing_range_end 0.1.test `sg/testdata`/T1#
   
 //⌄ enclosing_range_start 0.1.test `sg/testdata`/T1#F1().
   func (r T1) F1() {}
@@ -60,6 +72,7 @@
 //               relationship 0.1.test `sg/testdata`/I1#F1. implementation
 //                  ⌃ enclosing_range_end 0.1.test `sg/testdata`/T1#F1().
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/T2#
   type T2 int
 //     ^^ definition 0.1.test `sg/testdata`/T2#
 //        kind Type
@@ -68,6 +81,7 @@
 //        > type T2 int
 //        relationship 0.1.test `sg/testdata`/I1# implementation
 //        relationship 0.1.test `sg/testdata`/I2# implementation
+//          ⌃ enclosing_range_end 0.1.test `sg/testdata`/T2#
   
 //⌄ enclosing_range_start 0.1.test `sg/testdata`/T2#F1().
   func (r T2) F1() {}
@@ -100,6 +114,7 @@
 //               relationship 0.1.test `sg/testdata`/I2#F2. implementation
 //                  ⌃ enclosing_range_end 0.1.test `sg/testdata`/T2#F2().
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/A1#
   type A1 = T1
 //     ^^ definition 0.1.test `sg/testdata`/A1#
 //        kind TypeAlias
@@ -107,6 +122,8 @@
 //        signature_documentation
 //        > type A1 = T1
 //          ^^ reference 0.1.test `sg/testdata`/T1#
+//           ⌃ enclosing_range_end 0.1.test `sg/testdata`/A1#
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/A12#
   type A12 = A1
 //     ^^^ definition 0.1.test `sg/testdata`/A12#
 //         kind TypeAlias
@@ -114,35 +131,45 @@
 //         signature_documentation
 //         > type A12 = A1
 //           ^^ reference 0.1.test `sg/testdata`/A1#
+//            ⌃ enclosing_range_end 0.1.test `sg/testdata`/A12#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/InterfaceWithNonExportedMethod#
   type InterfaceWithNonExportedMethod interface {
 //     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/testdata`/InterfaceWithNonExportedMethod#
 //                                    kind Interface
 //                                    display_name InterfaceWithNonExportedMethod
 //                                    signature_documentation
 //                                    > type InterfaceWithNonExportedMethod interface{ nonExportedMethod() }
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/InterfaceWithNonExportedMethod#nonExportedMethod.
    nonExportedMethod()
 // ^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/testdata`/InterfaceWithNonExportedMethod#nonExportedMethod.
 //                   kind MethodSpecification
 //                   display_name nonExportedMethod
 //                   signature_documentation
 //                   > func (InterfaceWithNonExportedMethod).nonExportedMethod()
+//                   ⌃ enclosing_range_end 0.1.test `sg/testdata`/InterfaceWithNonExportedMethod#nonExportedMethod.
   }
+//⌃ enclosing_range_end 0.1.test `sg/testdata`/InterfaceWithNonExportedMethod#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/InterfaceWithExportedMethod#
   type InterfaceWithExportedMethod interface {
 //     ^^^^^^^^^^^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/testdata`/InterfaceWithExportedMethod#
 //                                 kind Interface
 //                                 display_name InterfaceWithExportedMethod
 //                                 signature_documentation
 //                                 > type InterfaceWithExportedMethod interface{ ExportedMethod() }
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/InterfaceWithExportedMethod#ExportedMethod.
    ExportedMethod()
 // ^^^^^^^^^^^^^^ definition 0.1.test `sg/testdata`/InterfaceWithExportedMethod#ExportedMethod.
 //                kind MethodSpecification
 //                display_name ExportedMethod
 //                signature_documentation
 //                > func (InterfaceWithExportedMethod).ExportedMethod()
+//                ⌃ enclosing_range_end 0.1.test `sg/testdata`/InterfaceWithExportedMethod#ExportedMethod.
   }
+//⌃ enclosing_range_end 0.1.test `sg/testdata`/InterfaceWithExportedMethod#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/Foo#
   type Foo int
 //     ^^^ definition 0.1.test `sg/testdata`/Foo#
 //         kind Type
@@ -153,6 +180,7 @@
 //         relationship 0.1.test `sg/testdata`/I3# implementation
 //         relationship 0.1.test `sg/testdata`/InterfaceWithExportedMethod# implementation
 //         relationship 0.1.test `sg/testdata`/InterfaceWithNonExportedMethod# implementation
+//           ⌃ enclosing_range_end 0.1.test `sg/testdata`/Foo#
   
 //⌄ enclosing_range_start 0.1.test `sg/testdata`/Foo#nonExportedMethod().
   func (r Foo) nonExportedMethod() {}
@@ -201,6 +229,7 @@
 //                            relationship 0.1.test `sg/testdata`/I3#ScipTestMethod. implementation
 //                                  ⌃ enclosing_range_end 0.1.test `sg/testdata`/Foo#ScipTestMethod().
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/SharedOne#
   type SharedOne interface {
 //     ^^^^^^^^^ definition 0.1.test `sg/testdata`/SharedOne#
 //               kind Interface
@@ -210,20 +239,26 @@
 //               >     Distinct()
 //               >     Shared()
 //               > }
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/SharedOne#Shared.
    Shared()
 // ^^^^^^ definition 0.1.test `sg/testdata`/SharedOne#Shared.
 //        kind MethodSpecification
 //        display_name Shared
 //        signature_documentation
 //        > func (SharedOne).Shared()
+//        ⌃ enclosing_range_end 0.1.test `sg/testdata`/SharedOne#Shared.
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/SharedOne#Distinct.
    Distinct()
 // ^^^^^^^^ definition 0.1.test `sg/testdata`/SharedOne#Distinct.
 //          kind MethodSpecification
 //          display_name Distinct
 //          signature_documentation
 //          > func (SharedOne).Distinct()
+//          ⌃ enclosing_range_end 0.1.test `sg/testdata`/SharedOne#Distinct.
   }
+//⌃ enclosing_range_end 0.1.test `sg/testdata`/SharedOne#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/SharedTwo#
   type SharedTwo interface {
 //     ^^^^^^^^^ definition 0.1.test `sg/testdata`/SharedTwo#
 //               kind Interface
@@ -233,20 +268,26 @@
 //               >     Shared()
 //               >     Unique()
 //               > }
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/SharedTwo#Shared.
    Shared()
 // ^^^^^^ definition 0.1.test `sg/testdata`/SharedTwo#Shared.
 //        kind MethodSpecification
 //        display_name Shared
 //        signature_documentation
 //        > func (SharedTwo).Shared()
+//        ⌃ enclosing_range_end 0.1.test `sg/testdata`/SharedTwo#Shared.
+// ⌄ enclosing_range_start 0.1.test `sg/testdata`/SharedTwo#Unique.
    Unique()
 // ^^^^^^ definition 0.1.test `sg/testdata`/SharedTwo#Unique.
 //        kind MethodSpecification
 //        display_name Unique
 //        signature_documentation
 //        > func (SharedTwo).Unique()
+//        ⌃ enclosing_range_end 0.1.test `sg/testdata`/SharedTwo#Unique.
   }
+//⌃ enclosing_range_end 0.1.test `sg/testdata`/SharedTwo#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/Between#
   type Between struct{}
 //     ^^^^^^^ definition 0.1.test `sg/testdata`/Between#
 //             kind Struct
@@ -255,6 +296,7 @@
 //             > type Between struct{}
 //             relationship 0.1.test `sg/testdata`/SharedOne# implementation
 //             relationship 0.1.test `sg/testdata`/SharedTwo# implementation
+//                    ⌃ enclosing_range_end 0.1.test `sg/testdata`/Between#
   
 //⌄ enclosing_range_start 0.1.test `sg/testdata`/Between#Shared().
   func (Between) Shared()   {}

@@ -101,6 +101,7 @@
   }
 //⌃ enclosing_range_end 0.1.test `sg/pr222`/UseVar().
   
+//⌄ enclosing_range_start 0.1.test `sg/pr222`/LocalType#
   type LocalType struct{}
 //     ^^^^^^^^^ definition 0.1.test `sg/pr222`/LocalType#
 //               kind Struct
@@ -108,6 +109,7 @@
 //               signature_documentation
 //               > type LocalType struct{}
 //               relationship github.com/example/deplib 0.1.test `github.com/example/deplib`/Stringer# implementation
+//                      ⌃ enclosing_range_end 0.1.test `sg/pr222`/LocalType#
   
 //⌄ enclosing_range_start 0.1.test `sg/pr222`/LocalType#String().
   func (l LocalType) String() string { return "local" }
@@ -125,6 +127,7 @@
 //                          relationship github.com/example/deplib 0.1.test `github.com/example/deplib`/Stringer#String(). implementation
 //                                                    ⌃ enclosing_range_end 0.1.test `sg/pr222`/LocalType#String().
   
+//⌄ enclosing_range_start 0.1.test `sg/pr222`/EmbeddedStringer#
   type EmbeddedStringer struct {
 //     ^^^^^^^^^^^^^^^^ definition 0.1.test `sg/pr222`/EmbeddedStringer#
 //                      kind Struct
@@ -132,6 +135,7 @@
 //                      signature_documentation
 //                      > type EmbeddedStringer struct{ LocalType }
 //                      relationship github.com/example/deplib 0.1.test `github.com/example/deplib`/Stringer# implementation
+// ⌄ enclosing_range_start 0.1.test `sg/pr222`/EmbeddedStringer#LocalType.
    LocalType
 // ^^^^^^^^^ definition 0.1.test `sg/pr222`/EmbeddedStringer#LocalType.
 //           kind Field
@@ -139,21 +143,27 @@
 //           signature_documentation
 //           > struct field LocalType LocalType
 // ^^^^^^^^^ reference 0.1.test `sg/pr222`/LocalType#
+//         ⌃ enclosing_range_end 0.1.test `sg/pr222`/EmbeddedStringer#LocalType.
   }
+//⌃ enclosing_range_end 0.1.test `sg/pr222`/EmbeddedStringer#
   
+//⌄ enclosing_range_start 0.1.test `sg/pr222`/LocalInterface#
   type LocalInterface interface {
 //     ^^^^^^^^^^^^^^ definition 0.1.test `sg/pr222`/LocalInterface#
 //                    kind Interface
 //                    display_name LocalInterface
 //                    signature_documentation
 //                    > type LocalInterface interface{ Get() int }
+// ⌄ enclosing_range_start 0.1.test `sg/pr222`/LocalInterface#Get.
    Get() int
 // ^^^ definition 0.1.test `sg/pr222`/LocalInterface#Get.
 //     kind MethodSpecification
 //     display_name Get
 //     signature_documentation
 //     > func (LocalInterface).Get() int
+//         ⌃ enclosing_range_end 0.1.test `sg/pr222`/LocalInterface#Get.
   }
+//⌃ enclosing_range_end 0.1.test `sg/pr222`/LocalInterface#
   
 //⌄ enclosing_range_start 0.1.test `sg/pr222`/UseDepWriter().
   func UseDepWriter(w deplib.Writer) {

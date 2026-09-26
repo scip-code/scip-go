@@ -15,6 +15,7 @@
 //  ^^^^^^^ reference github.com/golang/go/src go1.22 testing/
   )
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata/conflicting_test_symbols`/ErrNotImplemented.
   var ErrNotImplemented = errors.New("not implemented")
 //    ^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/testdata/conflicting_test_symbols`/ErrNotImplemented.
 //                      kind Variable
@@ -23,6 +24,7 @@
 //                      > var ErrNotImplemented error
 //                        ^^^^^^ reference github.com/golang/go/src go1.22 errors/
 //                               ^^^ reference github.com/golang/go/src go1.22 errors/New().
+//                                                    ⌃ enclosing_range_end 0.1.test `sg/testdata/conflicting_test_symbols`/ErrNotImplemented.
   
 //⌄ enclosing_range_start 0.1.test `sg/testdata/conflicting_test_symbols`/newKey().
   func newKey(t *testing.T) (string, error) {

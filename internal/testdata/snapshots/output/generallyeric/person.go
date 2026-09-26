@@ -4,20 +4,25 @@
   import "fmt"
 //        ^^^ reference github.com/golang/go/src go1.22 fmt/
   
+//⌄ enclosing_range_start 0.1.test `sg/generallyeric`/Person#
   type Person interface {
 //     ^^^^^^ definition 0.1.test `sg/generallyeric`/Person#
 //            kind Interface
 //            display_name Person
 //            signature_documentation
 //            > type Person interface{ Work() }
+// ⌄ enclosing_range_start 0.1.test `sg/generallyeric`/Person#Work.
    Work()
 // ^^^^ definition 0.1.test `sg/generallyeric`/Person#Work.
 //      kind MethodSpecification
 //      display_name Work
 //      signature_documentation
 //      > func (Person).Work()
+//      ⌃ enclosing_range_end 0.1.test `sg/generallyeric`/Person#Work.
   }
+//⌃ enclosing_range_end 0.1.test `sg/generallyeric`/Person#
   
+//⌄ enclosing_range_start 0.1.test `sg/generallyeric`/worker#
   type worker string
 //     ^^^^^^ definition 0.1.test `sg/generallyeric`/worker#
 //            kind Type
@@ -25,6 +30,7 @@
 //            signature_documentation
 //            > type worker string
 //            relationship 0.1.test `sg/generallyeric`/Person# implementation
+//                 ⌃ enclosing_range_end 0.1.test `sg/generallyeric`/worker#
   
 //⌄ enclosing_range_start 0.1.test `sg/generallyeric`/worker#Work().
   func (w worker) Work() {

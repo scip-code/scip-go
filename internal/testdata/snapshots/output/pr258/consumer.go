@@ -8,6 +8,7 @@
   import "github.com/example/deplib"
 //        ^^^^^^^^^^^^^^^^^^^^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/
   
+//⌄ enclosing_range_start 0.1.test `sg/pr258`/Sentinel.
   var Sentinel deplib.CustomErr
 //    ^^^^^^^^ definition 0.1.test `sg/pr258`/Sentinel.
 //             kind Variable
@@ -16,6 +17,7 @@
 //             > var Sentinel deplib.CustomErr
 //             ^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/
 //                    ^^^^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/CustomErr#
+//                            ⌃ enclosing_range_end 0.1.test `sg/pr258`/Sentinel.
   
 //⌄ enclosing_range_start 0.1.test `sg/pr258`/New().
   func New() deplib.CustomErr { return nil }
@@ -28,12 +30,14 @@
 //                  ^^^^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/CustomErr#
 //                                         ⌃ enclosing_range_end 0.1.test `sg/pr258`/New().
   
+//⌄ enclosing_range_start 0.1.test `sg/pr258`/Wrapper#
   type Wrapper struct {
 //     ^^^^^^^ definition 0.1.test `sg/pr258`/Wrapper#
 //             kind Struct
 //             display_name Wrapper
 //             signature_documentation
 //             > type Wrapper struct{ Err deplib.CustomErr }
+// ⌄ enclosing_range_start 0.1.test `sg/pr258`/Wrapper#Err.
    Err deplib.CustomErr
 // ^^^ definition 0.1.test `sg/pr258`/Wrapper#Err.
 //     kind Field
@@ -42,5 +46,7 @@
 //     > struct field Err deplib.CustomErr
 //     ^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/
 //            ^^^^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/CustomErr#
+//                    ⌃ enclosing_range_end 0.1.test `sg/pr258`/Wrapper#Err.
   }
+//⌃ enclosing_range_end 0.1.test `sg/pr258`/Wrapper#
   

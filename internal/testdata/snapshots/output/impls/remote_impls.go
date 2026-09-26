@@ -20,6 +20,7 @@
 //                      ^^^^^^^^^^^^^^ reference github.com/golang/go/src go1.22 `net/http`/ResponseWriter#
 //                                       ⌃ enclosing_range_end 0.1.test `sg/impls`/Something().
   
+//⌄ enclosing_range_start 0.1.test `sg/impls`/MyWriter#
   type MyWriter struct{}
 //     ^^^^^^^^ definition 0.1.test `sg/impls`/MyWriter#
 //              kind Struct
@@ -28,6 +29,7 @@
 //              > type MyWriter struct{}
 //              relationship github.com/golang/go/src go1.22 `net/http`/ResponseWriter# implementation
 //              relationship github.com/golang/go/src go1.22 io/Writer# implementation
+//                     ⌃ enclosing_range_end 0.1.test `sg/impls`/MyWriter#
   
 //⌄ enclosing_range_start 0.1.test `sg/impls`/MyWriter#Header().
   func (w MyWriter) Header() http.Header        { panic("") }

@@ -26,6 +26,7 @@
   }
 //⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#String().
   
+//⌄ enclosing_range_start 0.1.test `sg/embedded`/RecentCommittersResults#
   type RecentCommittersResults struct {
 //     ^^^^^^^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#
 //                             kind Struct
@@ -46,76 +47,99 @@
 //                             >     PageInfo struct{ HasNextPage bool }
 //                             > }
 //                             relationship github.com/golang/go/src go1.22 fmt/Stringer# implementation
+// ⌄ enclosing_range_start 0.1.test `sg/embedded`/RecentCommittersResults#Nodes.
    Nodes []struct {
 // ^^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#Nodes.
 //       kind Field
 //       display_name Nodes
 //       signature_documentation
 //       > struct field Nodes []struct{Authors struct{Nodes []struct{Date string; Email string; Name string; User struct{Login string}; AvatarURL string}}}
+//  ⌄ enclosing_range_start 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#Authors.
     Authors struct {
 //  ^^^^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#Authors.
 //          kind Field
 //          display_name Authors
 //          signature_documentation
 //          > struct field Authors struct{Nodes []struct{Date string; Email string; Name string; User struct{Login string}; AvatarURL string}}
+//   ⌄ enclosing_range_start 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#Nodes.
      Nodes []struct {
 //   ^^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#Nodes.
 //         kind Field
 //         display_name Nodes
 //         signature_documentation
 //         > struct field Nodes []struct{Date string; Email string; Name string; User struct{Login string}; AvatarURL string}
+//    ⌄ enclosing_range_start 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#Date.
       Date  string
 //    ^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#Date.
 //         kind Field
 //         display_name Date
 //         signature_documentation
 //         > struct field Date string
+//               ⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#Date.
+//    ⌄ enclosing_range_start 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#Email.
       Email string
 //    ^^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#Email.
 //          kind Field
 //          display_name Email
 //          signature_documentation
 //          > struct field Email string
+//               ⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#Email.
+//    ⌄ enclosing_range_start 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#Name.
       Name  string
 //    ^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#Name.
 //         kind Field
 //         display_name Name
 //         signature_documentation
 //         > struct field Name string
+//               ⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#Name.
+//    ⌄ enclosing_range_start 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#User.
       User  struct {
 //    ^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#User.
 //         kind Field
 //         display_name User
 //         signature_documentation
 //         > struct field User struct{Login string}
+//     ⌄ enclosing_range_start 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#$anon_d4bff1f61f45b2a1#Login.
        Login string
 //     ^^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#$anon_d4bff1f61f45b2a1#Login.
 //           kind Field
 //           display_name Login
 //           signature_documentation
 //           > struct field Login string
+//                ⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#$anon_d4bff1f61f45b2a1#Login.
       }
+//    ⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#User.
+//    ⌄ enclosing_range_start 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#AvatarURL.
       AvatarURL string
 //    ^^^^^^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#AvatarURL.
 //              kind Field
 //              display_name AvatarURL
 //              signature_documentation
 //              > struct field AvatarURL string
+//                   ⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#$anon_b2a8a16c744b2d4b#AvatarURL.
      }
+//   ⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#$anon_bb290b1f6ea0cf58#Nodes.
     }
+//  ⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#$anon_90b32de18ec80596#Authors.
    }
+// ⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#Nodes.
+// ⌄ enclosing_range_start 0.1.test `sg/embedded`/RecentCommittersResults#PageInfo.
    PageInfo struct {
 // ^^^^^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#PageInfo.
 //          kind Field
 //          display_name PageInfo
 //          signature_documentation
 //          > struct field PageInfo struct{HasNextPage bool}
+//  ⌄ enclosing_range_start 0.1.test `sg/embedded`/RecentCommittersResults#$anon_0a5c453971407ce4#HasNextPage.
     HasNextPage bool
 //  ^^^^^^^^^^^ definition 0.1.test `sg/embedded`/RecentCommittersResults#$anon_0a5c453971407ce4#HasNextPage.
 //              kind Field
 //              display_name HasNextPage
 //              signature_documentation
 //              > struct field HasNextPage bool
+//                 ⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#$anon_0a5c453971407ce4#HasNextPage.
    }
+// ⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#PageInfo.
   }
+//⌃ enclosing_range_end 0.1.test `sg/embedded`/RecentCommittersResults#
   

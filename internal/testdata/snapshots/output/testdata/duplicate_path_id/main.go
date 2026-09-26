@@ -5,19 +5,23 @@
 //              signature_documentation
 //              > package gosrc
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata/duplicate_path_id`/importMeta#
   type importMeta struct{}
 //     ^^^^^^^^^^ definition 0.1.test `sg/testdata/duplicate_path_id`/importMeta#
 //                kind Struct
 //                display_name importMeta
 //                signature_documentation
 //                > type importMeta struct{}
+//                       ⌃ enclosing_range_end 0.1.test `sg/testdata/duplicate_path_id`/importMeta#
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata/duplicate_path_id`/sourceMeta#
   type sourceMeta struct{}
 //     ^^^^^^^^^^ definition 0.1.test `sg/testdata/duplicate_path_id`/sourceMeta#
 //                kind Struct
 //                display_name sourceMeta
 //                signature_documentation
 //                > type sourceMeta struct{}
+//                       ⌃ enclosing_range_end 0.1.test `sg/testdata/duplicate_path_id`/sourceMeta#
   
 //⌄ enclosing_range_start 0.1.test `sg/testdata/duplicate_path_id`/fetchMeta().
   func fetchMeta() (string, *importMeta, *sourceMeta) {

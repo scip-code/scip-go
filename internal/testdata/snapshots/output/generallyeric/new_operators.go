@@ -1,6 +1,7 @@
   package generallyeric
 //        ^^^^^^^^^^^^^ definition 0.1.test `sg/generallyeric`/
   
+//⌄ enclosing_range_start 0.1.test `sg/generallyeric`/Number#
   type Number interface {
 //     ^^^^^^ definition 0.1.test `sg/generallyeric`/Number#
 //            kind Interface
@@ -12,6 +13,7 @@
    ~int | ~int8 | ~int16 | ~int32 | ~int64 |
     ~float32 | ~float64
   }
+//⌃ enclosing_range_end 0.1.test `sg/generallyeric`/Number#
   
 //⌄ enclosing_range_start 0.1.test `sg/generallyeric`/Double().
   func Double[T Number](value T) T {
@@ -38,6 +40,7 @@
   }
 //⌃ enclosing_range_end 0.1.test `sg/generallyeric`/Double().
   
+//⌄ enclosing_range_start 0.1.test `sg/generallyeric`/Box#
   type Box[T any] struct {
 //     ^^^ definition 0.1.test `sg/generallyeric`/Box#
 //         kind Struct
@@ -49,6 +52,7 @@
 //           display_name T
 //           signature_documentation
 //           > type parameter T any
+// ⌄ enclosing_range_start 0.1.test `sg/generallyeric`/Box#Something.
    Something T
 // ^^^^^^^^^ definition 0.1.test `sg/generallyeric`/Box#Something.
 //           kind Field
@@ -56,8 +60,11 @@
 //           signature_documentation
 //           > struct field Something T
 //           ^ reference local 2
+//           ⌃ enclosing_range_end 0.1.test `sg/generallyeric`/Box#Something.
   }
+//⌃ enclosing_range_end 0.1.test `sg/generallyeric`/Box#
   
+//⌄ enclosing_range_start 0.1.test `sg/generallyeric`/handler#
   type handler[T any] struct {
 //     ^^^^^^^ definition 0.1.test `sg/generallyeric`/handler#
 //             kind Struct
@@ -72,6 +79,7 @@
 //               display_name T
 //               signature_documentation
 //               > type parameter T any
+// ⌄ enclosing_range_start 0.1.test `sg/generallyeric`/handler#Box.
    Box[T]
 // ^^^ definition 0.1.test `sg/generallyeric`/handler#Box.
 //     kind Field
@@ -80,11 +88,15 @@
 //     > struct field Box Box[T]
 // ^^^ reference 0.1.test `sg/generallyeric`/Box#
 //     ^ reference local 3
+//      ⌃ enclosing_range_end 0.1.test `sg/generallyeric`/handler#Box.
+// ⌄ enclosing_range_start 0.1.test `sg/generallyeric`/handler#Another.
    Another string
 // ^^^^^^^ definition 0.1.test `sg/generallyeric`/handler#Another.
 //         kind Field
 //         display_name Another
 //         signature_documentation
 //         > struct field Another string
+//              ⌃ enclosing_range_end 0.1.test `sg/generallyeric`/handler#Another.
   }
+//⌃ enclosing_range_end 0.1.test `sg/generallyeric`/handler#
   

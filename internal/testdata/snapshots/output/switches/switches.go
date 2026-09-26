@@ -5,6 +5,7 @@
 //                 signature_documentation
 //                 > package switches
   
+//⌄ enclosing_range_start 0.1.test `sg/switches`/CustomSwitch#
   // CustomSwitch does the things in a switch
   type CustomSwitch struct{}
 //     ^^^^^^^^^^^^ definition 0.1.test `sg/switches`/CustomSwitch#
@@ -14,6 +15,7 @@
 //                  > type CustomSwitch struct{}
 //                  documentation
 //                  > CustomSwitch does the things in a switch
+//                         ⌃ enclosing_range_end 0.1.test `sg/switches`/CustomSwitch#
   
   // Something does some things... and stuff
 //⌄ enclosing_range_start 0.1.test `sg/switches`/CustomSwitch#Something().

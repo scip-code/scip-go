@@ -8,6 +8,7 @@
 //  ^^^^ reference github.com/golang/go/src go1.22 sync/
   )
   
+//⌄ enclosing_range_start 0.1.test `sg/testdata`/ParallelizableFunc#
   // ParallelizableFunc is a function that can be called concurrently with other instances
   // of this function type.
   type ParallelizableFunc func(ctx context.Context) error
@@ -26,6 +27,7 @@
 //                                 > var ctx Context
 //                                 ^^^^^^^ reference github.com/golang/go/src go1.22 context/
 //                                         ^^^^^^^ reference github.com/golang/go/src go1.22 context/Context#
+//                                                      ⌃ enclosing_range_end 0.1.test `sg/testdata`/ParallelizableFunc#
   
   // Parallel invokes each of the given parallelizable functions in their own goroutines and
   // returns the first error to occur. This method will block until all goroutines have returned.

@@ -12,6 +12,7 @@
 //  ^^^^^^^ reference github.com/golang/go/src go1.22 `os/exec`/
   )
   
+//⌄ enclosing_range_start 0.1.test `sg/embedded`/osExecCommand#
   type osExecCommand struct {
 //     ^^^^^^^^^^^^^ definition 0.1.test `sg/embedded`/osExecCommand#
 //                   kind Struct
@@ -19,6 +20,7 @@
 //                   signature_documentation
 //                   > type osExecCommand struct{ *exec.Cmd }
 //                   relationship github.com/golang/go/src go1.22 fmt/Stringer# implementation
+// ⌄ enclosing_range_start 0.1.test `sg/embedded`/osExecCommand#Cmd.
    *exec.Cmd
 //  ^^^^ reference github.com/golang/go/src go1.22 `os/exec`/
 //       ^^^ definition 0.1.test `sg/embedded`/osExecCommand#Cmd.
@@ -27,7 +29,9 @@
 //           signature_documentation
 //           > struct field Cmd *exec.Cmd
 //       ^^^ reference github.com/golang/go/src go1.22 `os/exec`/Cmd#
+//         ⌃ enclosing_range_end 0.1.test `sg/embedded`/osExecCommand#Cmd.
   }
+//⌃ enclosing_range_end 0.1.test `sg/embedded`/osExecCommand#
   
 //⌄ enclosing_range_start 0.1.test `sg/embedded`/wrapExecCommand().
   func wrapExecCommand(c *exec.Cmd) {
@@ -50,6 +54,7 @@
   }
 //⌃ enclosing_range_end 0.1.test `sg/embedded`/wrapExecCommand().
   
+//⌄ enclosing_range_start 0.1.test `sg/embedded`/Inner#
   type Inner struct {
 //     ^^^^^ definition 0.1.test `sg/embedded`/Inner#
 //           kind Struct
@@ -60,26 +65,34 @@
 //           >     Y int
 //           >     Z int
 //           > }
+// ⌄ enclosing_range_start 0.1.test `sg/embedded`/Inner#X.
    X int
 // ^ definition 0.1.test `sg/embedded`/Inner#X.
 //   kind Field
 //   display_name X
 //   signature_documentation
 //   > struct field X int
+//     ⌃ enclosing_range_end 0.1.test `sg/embedded`/Inner#X.
+// ⌄ enclosing_range_start 0.1.test `sg/embedded`/Inner#Y.
    Y int
 // ^ definition 0.1.test `sg/embedded`/Inner#Y.
 //   kind Field
 //   display_name Y
 //   signature_documentation
 //   > struct field Y int
+//     ⌃ enclosing_range_end 0.1.test `sg/embedded`/Inner#Y.
+// ⌄ enclosing_range_start 0.1.test `sg/embedded`/Inner#Z.
    Z int
 // ^ definition 0.1.test `sg/embedded`/Inner#Z.
 //   kind Field
 //   display_name Z
 //   signature_documentation
 //   > struct field Z int
+//     ⌃ enclosing_range_end 0.1.test `sg/embedded`/Inner#Z.
   }
+//⌃ enclosing_range_end 0.1.test `sg/embedded`/Inner#
   
+//⌄ enclosing_range_start 0.1.test `sg/embedded`/Outer#
   type Outer struct {
 //     ^^^^^ definition 0.1.test `sg/embedded`/Outer#
 //           kind Struct
@@ -89,6 +102,7 @@
 //           >     Inner
 //           >     W int
 //           > }
+// ⌄ enclosing_range_start 0.1.test `sg/embedded`/Outer#Inner.
    Inner
 // ^^^^^ definition 0.1.test `sg/embedded`/Outer#Inner.
 //       kind Field
@@ -96,13 +110,17 @@
 //       signature_documentation
 //       > struct field Inner Inner
 // ^^^^^ reference 0.1.test `sg/embedded`/Inner#
+//     ⌃ enclosing_range_end 0.1.test `sg/embedded`/Outer#Inner.
+// ⌄ enclosing_range_start 0.1.test `sg/embedded`/Outer#W.
    W int
 // ^ definition 0.1.test `sg/embedded`/Outer#W.
 //   kind Field
 //   display_name W
 //   signature_documentation
 //   > struct field W int
+//     ⌃ enclosing_range_end 0.1.test `sg/embedded`/Outer#W.
   }
+//⌃ enclosing_range_end 0.1.test `sg/embedded`/Outer#
   
 //⌄ enclosing_range_start 0.1.test `sg/embedded`/useOfCompositeStructs().
   func useOfCompositeStructs() {
