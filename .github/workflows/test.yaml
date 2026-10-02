@@ -63,7 +63,7 @@ jobs:
             expect_file: "cmd/scip-go/main.go"
           - name: kubernetes
             repo: kubernetes/kubernetes
-            ref: v1.32.3
+            ref: v1.37.1
             expect_file: "pkg/apis/core/validation/validation.go"
           - name: caddy
             repo: caddyserver/caddy
