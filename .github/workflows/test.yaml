@@ -80,7 +80,7 @@ jobs:
             gopackagesdriver: true
           - name: prometheus
             repo: prometheus/prometheus
-            ref: v3.0.1
+            ref: v3.15.0
             expect_file: "cmd/prometheus/main.go"
           - name: hugo
             repo: gohugoio/hugo
