@@ -4,7 +4,7 @@
       url = "github:numtide/flake-utils";
     };
     nixpkgs = {
-      url = "github:NixOS/nixpkgs/nixos-26.05";
+      url = "github:NixOS/nixpkgs/nixos-26.05-small";
     };
   };
 
@@ -19,10 +19,25 @@
       let
         pkgs = import nixpkgs { inherit system; };
         version = pkgs.lib.fileContents ./internal/index/version.txt;
+        # Go 1.27.3 rejects chains through the compromised eMudhra
+        # intermediates (CVE-2026-111943). The default pkgs.go is an
+        # older 1.26 release without the fix.
+        go = pkgs.go_1_27;
+        # NSS 3.131.1 removes the emSign ECC Root CA - G3 root that
+        # the compromised eMudhra intermediates chain to. Until nixpkgs
+        # ships it, drop the root ourselves so git and other OpenSSL
+        # clients reject those chains too. (The bundle already excludes
+        # AAA Certificate Services, the root of the Sectigo cross-signs,
+        # from TLS trust.)
+        cacert =
+          if pkgs.lib.versionOlder pkgs.cacert.version "3.131.1" then
+            pkgs.cacert.override { blacklist = [ "emSign ECC Root CA - G3" ]; }
+          else
+            pkgs.cacert;
       in
       {
         packages = {
-          scip-go = pkgs.buildGoModule {
+          scip-go = (pkgs.buildGoModule.override { inherit go; }) {
             pname = "scip-go";
             inherit version;
             src = ./.;
@@ -44,9 +59,9 @@
             tag = version;
             contents = [
               self.packages.${system}.scip-go
-              pkgs.go
+              go
               pkgs.git
-              pkgs.dockerTools.caCertificates
+              (pkgs.dockerTools.override { inherit cacert; }).caCertificates
               pkgs.dockerTools.usrBinEnv
               pkgs.dockerTools.fakeNss
               pkgs.busybox
@@ -103,7 +118,7 @@
         devShells = {
           default = pkgs.mkShellNoCC {
             buildInputs = [
-              pkgs.go
+              go
               pkgs.gotools
               pkgs.nixfmt
             ];
