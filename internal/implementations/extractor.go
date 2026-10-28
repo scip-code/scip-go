@@ -142,6 +142,7 @@ func (e *Extractor) classify(
 		HasUnexported: hasUnexportedMethods(methods),
 		PkgPath:       pkgPath,
 	}
+	impl.Sigs, impl.Tricky = methodSigs(methods)
 	if types.IsInterface(named) {
 		interfaces[impl.Symbol.Symbol] = impl
 	} else {
