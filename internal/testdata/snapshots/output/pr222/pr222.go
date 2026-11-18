@@ -124,7 +124,7 @@
 //                          display_name String
 //                          signature_documentation
 //                          > func (LocalType).String() string
-//                          relationship github.com/example/deplib 0.1.test `github.com/example/deplib`/Stringer#String(). implementation
+//                          relationship github.com/example/deplib 0.1.test `github.com/example/deplib`/Stringer#String. implementation
 //                                                    ⌃ enclosing_range_end 0.1.test `sg/pr222`/LocalType#String().
   
 //⌄ enclosing_range_start 0.1.test `sg/pr222`/EmbeddedStringer#
@@ -181,7 +181,7 @@
 //                           ^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/Writer#
    w.Write(nil)
 // ^ reference local 4
-//   ^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/Writer#Write().
+//   ^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/Writer#Write.
   }
 //⌃ enclosing_range_end 0.1.test `sg/pr222`/UseDepWriter().
   
@@ -201,7 +201,7 @@
 //                           ^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/Getter#
    return g.Get()
 //        ^ reference local 5
-//          ^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/Getter#Get().
+//          ^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/Getter#Get.
   }
 //⌃ enclosing_range_end 0.1.test `sg/pr222`/UseDepGetter().
   
@@ -221,10 +221,10 @@
 //                                 ^^^^^^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/WriteCloser#
    wc.Write(nil)
 // ^^ reference local 6
-//    ^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/Writer#Write().
+//    ^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/Writer#Write.
    wc.Close()
 // ^^ reference local 6
-//    ^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/WriteCloser#Close().
+//    ^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/WriteCloser#Close.
   }
 //⌃ enclosing_range_end 0.1.test `sg/pr222`/UseDepWriteCloser().
   

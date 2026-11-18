@@ -17,7 +17,7 @@
 //                                         display_name String
 //                                         signature_documentation
 //                                         > func (*RecentCommittersResults).String() string
-//                                         relationship github.com/golang/go/src go1.22 fmt/Stringer#String(). implementation
+//                                         relationship github.com/golang/go/src go1.22 fmt/Stringer#String. implementation
    return fmt.Sprintf("RecentCommittersResults{Nodes: %d}", len(r.Nodes))
 //        ^^^ reference github.com/golang/go/src go1.22 fmt/
 //            ^^^^^^^ reference github.com/golang/go/src go1.22 fmt/Sprintf().

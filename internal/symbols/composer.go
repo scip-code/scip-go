@@ -131,6 +131,10 @@ func (c *Composer) describeFunc(fn *types.Func) []*scip.Descriptor {
 		if recvTypeName == "" {
 			return nil
 		}
+		suffix := scip.Descriptor_Method
+		if _, ok := recv.Type().Underlying().(*types.Interface); ok {
+			suffix = scip.Descriptor_Term
+		}
 
 		return []*scip.Descriptor{
 			{
@@ -143,7 +147,7 @@ func (c *Composer) describeFunc(fn *types.Func) []*scip.Descriptor {
 			},
 			{
 				Name:   fn.Name(),
-				Suffix: scip.Descriptor_Method,
+				Suffix: suffix,
 			},
 		}
 	}
