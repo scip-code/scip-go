@@ -128,6 +128,10 @@ func LoadPackages(
 		}
 
 		for _, pkg := range pkgs {
+			// Generated test runners import testing/internal/testdeps.
+			if pkg.Name == "main" && pkg.Imports["testing/internal/testdeps"] != nil {
+				continue
+			}
 			addImportsToPkgs(allPackages, &opts, pkg)
 			projectPackages[newtypes.GetID(pkg)] = allPackages[newtypes.GetID(pkg)]
 		}
