@@ -43,7 +43,7 @@ func NewFileVisitor(
 		globalSymbols:     globalSymbols,
 		occurrences:       occurrences,
 		caseClauses:       caseClauses,
-		declarationRanges: collectDeclarationRanges(pkg, file),
+		declarationRanges: collectDeclarationRanges(pkg.Fset, file),
 	}
 }
 
@@ -82,7 +82,7 @@ type fileVisitor struct {
 // collectDeclarationRanges is deliberately limited to definitions whose
 // declaration ownership is unambiguous in the Go AST. In particular, function
 // parameters and local variables are not promoted to full-file declarations.
-func collectDeclarationRanges(pkg *packages.Package, file *ast.File) map[token.Pos]*scip.Range {
+func collectDeclarationRanges(fset *token.FileSet, file *ast.File) map[token.Pos]*scip.Range {
 	ranges := make(map[token.Pos]*scip.Range)
 	record := func(name *ast.Ident, declaration ast.Node, doc *ast.CommentGroup) {
 		if name == nil || name.Name == "_" || declaration == nil {
@@ -92,8 +92,7 @@ func collectDeclarationRanges(pkg *packages.Package, file *ast.File) map[token.P
 		if doc != nil && doc.Pos() < start {
 			start = doc.Pos()
 		}
-		rng := scipRange(pkg.Fset.PositionFor(start, false),
-			pkg.Fset.PositionFor(declaration.End(), false), pkg.TypesInfo.Defs[name])
+		rng := scipRange(fset.PositionFor(start, false), fset.PositionFor(declaration.End(), false), nil)
 		ranges[name.Pos()] = &rng
 	}
 	for _, declaration := range file.Decls {
@@ -145,7 +144,7 @@ func collectDeclarationRanges(pkg *packages.Package, file *ast.File) map[token.P
 								record(name, field, field.Doc)
 							}
 						} else {
-							for _, name := range getIdentOfTypeExpr(pkg, field.Type) {
+							for _, name := range getIdentOfTypeExpr(fset, field.Type) {
 								record(name, field, field.Doc)
 							}
 						}
