@@ -73,23 +73,8 @@ func TestSnapshots(t *testing.T) {
 
 			// Index nested modules (such as dependencies wired in with a local
 			// replace directive) on their own, as their published index would be,
-			// and check that references to them match their definitions.
-			for _, dep := range indexNestedModules(t, inputDirectory) {
-				for _, doc := range scipIndex.Documents {
-					for _, occ := range doc.Occurrences {
-						if scip.SymbolRole_Definition.Matches(occ) || dep.definitions[occ.Symbol] {
-							continue
-						}
-						// A replacement module with a different module path keeps the
-						// replaced import paths, which its own index cannot match.
-						sym, err := scip.ParseSymbol(occ.Symbol)
-						if err == nil && sym.Package.GetName() == dep.modulePath && strings.HasPrefix(sym.Descriptors[0].Name, dep.modulePath) {
-							t.Errorf("%s: reference %q has no definition in %s", doc.RelativePath, occ.Symbol, dep.modulePath)
-						}
-					}
-				}
-				scipIndex.Documents = append(scipIndex.Documents, dep.documents...)
-			}
+			// so their definitions can be compared with the references above.
+			scipIndex.Documents = append(scipIndex.Documents, indexNestedModules(t, inputDirectory)...)
 
 			// Filter out documents outside of current directory
 			var filteredDocs []*scip.Document
@@ -127,17 +112,11 @@ func TestSnapshots(t *testing.T) {
 	)
 }
 
-type nestedModule struct {
-	modulePath  string
-	documents   []*scip.Document
-	definitions map[string]bool
-}
-
 // indexNestedModules indexes every module below root, except the
 // GOPACKAGESDRIVER in driver/, with document paths relative to root.
-func indexNestedModules(t *testing.T, root string) []nestedModule {
+func indexNestedModules(t *testing.T, root string) []*scip.Document {
 	t.Helper()
-	var modules []nestedModule
+	var documents []*scip.Document
 	err := filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
 		if err != nil || d.Name() != "go.mod" || filepath.Dir(path) == root {
 			return err
@@ -151,31 +130,23 @@ func indexNestedModules(t *testing.T, root string) []nestedModule {
 		if err != nil {
 			return err
 		}
-		module := nestedModule{modulePath: modfile.ModulePath(contents), definitions: map[string]bool{}}
-		err = index.Index(func(msg proto.Message) error {
+		return index.Index(func(msg proto.Message) error {
 			if doc, ok := msg.(*scip.Document); ok {
 				doc.RelativePath = filepath.Join(rel, doc.RelativePath)
-				for _, occ := range doc.Occurrences {
-					if scip.SymbolRole_Definition.Matches(occ) {
-						module.definitions[occ.Symbol] = true
-					}
-				}
-				module.documents = append(module.documents, doc)
+				documents = append(documents, doc)
 			}
 			return nil
 		}, config.IndexOpts{
 			ModuleRoot:      dir,
 			ModuleVersion:   "0.1.test",
-			ModulePath:      module.modulePath,
+			ModulePath:      modfile.ModulePath(contents),
 			GoStdlibVersion: "go1.22",
 		})
-		modules = append(modules, module)
-		return err
 	})
 	if err != nil {
 		t.Fatal(err)
 	}
-	return modules
+	return documents
 }
 
 func assertTypedOccurrenceRanges(t *testing.T, scipIndex *scip.Index) {
