@@ -65,7 +65,7 @@ type fileVisitor struct {
 	// field definition position to symbol for the package
 	pkgSymbols *lookup.Package
 
-	// field definition position to symbol for the entire compliation
+	// field definition position to symbol for the entire compilation
 	globalSymbols *lookup.Global
 
 	// occurrences in this file
@@ -352,7 +352,7 @@ func (v *fileVisitor) emitImportReference(
 	v.newReference(sym, symbols.RangeFromName(position, importedPackage.PkgPath, true), false)
 }
 
-// newDefinition emits a scip.Occurence ONLY. This will not emit a
+// newDefinition emits a scip.Occurrence ONLY. This will not emit a
 // new symbol. You must do that using DeclareNewSymbol[ForPos]
 func (v *fileVisitor) newDefinition(
 	symbol string, rng scip.Range, enclRng *scip.Range, deprecated bool,
@@ -388,7 +388,7 @@ func (v *fileVisitor) newReference(
 func (v *fileVisitor) ToScipDocument() *scip.Document {
 	documentFile := v.pkg.Fset.File(v.file.Pos())
 	if documentFile == nil {
-		panic("that shouldn't happend")
+		panic("that shouldn't happen")
 	}
 
 	documentSymbols := v.pkgSymbols.SymbolsForFile(documentFile)
