@@ -57,6 +57,9 @@
           docker = pkgs.dockerTools.buildLayeredImage {
             name = "scip-go";
             tag = version;
+            # Without a lower limit, each store path in the closure
+            # gets its own layer (up to 100).
+            maxLayers = 10;
             contents = [
               self.packages.${system}.scip-go
               go
