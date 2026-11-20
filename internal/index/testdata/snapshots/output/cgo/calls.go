@@ -32,7 +32,9 @@
 //     display_name ptr
 //     signature_documentation
 //     > var ptr *_Ctype_char
+//        ^^^^^^^^^ reference 0.1.test `sg/cgo`/_Cfunc_CString().
    defer C.free(unsafe.Pointer(ptr))
+//       ^^^^^^ reference 0.1.test `sg/cgo`/_Cfunc_free().
 //              ^^^^^^ reference github.com/golang/go/src go1.22 unsafe/
 //                             ^^^ reference local 0
    buf := C.malloc(16)
@@ -41,7 +43,9 @@
 //     display_name buf
 //     signature_documentation
 //     > var buf Pointer
+//        ^^^^^^^^ reference 0.1.test `sg/cgo`/_Cfunc__CMalloc().
    defer C.free(buf)
+//       ^^^^^^ reference 0.1.test `sg/cgo`/_Cfunc_free().
 //              ^^^ reference local 1
    var out C.int
 //     ^^^ definition local 2
@@ -49,26 +53,44 @@
 //         display_name out
 //         signature_documentation
 //         > var out _Ctype_int
+//         ^^^^^ reference 0.1.test `sg/cgo`/_Ctype_int#
    C.fill(
+// ^^^^^^ reference 0.1.test `sg/cgo`/_Cfunc_fill().
     &out,
 //   ^^^ reference local 2
     &out,
 //   ^^^ reference local 2
     C.int(1),
+//  ^^^^^ reference 0.1.test `sg/cgo`/_Ctype_int#
     C.int(2),
+//  ^^^^^ reference 0.1.test `sg/cgo`/_Ctype_int#
     (*C.char)(unsafe.Pointer(ptr)))
+//    ^^^^^^ reference 0.1.test `sg/cgo`/_Ctype_char#
 //            ^^^^^^ reference github.com/golang/go/src go1.22 unsafe/
 //                           ^^^ reference local 0
    C.add(C.int(1), C.int(2))
+// ^^^^^ reference 0.1.test `sg/cgo`/_Cfunc_add().
+//       ^^^^^ reference 0.1.test `sg/cgo`/_Ctype_int#
+//                 ^^^^^ reference 0.1.test `sg/cgo`/_Ctype_int#
    C.
+// ^^ reference 0.1.test `sg/cgo`/_Cfunc_add(). 1:5
     add(1, 2)
    _, _ = C.add(C.add(1, 2), 3)
+//        ^^^^^ reference 0.1.test `sg/cgo`/_C2func_add().
+//              ^^^^^ reference 0.1.test `sg/cgo`/_Cfunc_add().
    var _, _ = (C.add(1, 2))
+//             ^^^^^ reference 0.1.test `sg/cgo`/_C2func_add().
    _, _ = C.add(1, 2), C.add(3, 4)
+//        ^^^^^ reference 0.1.test `sg/cgo`/_Cfunc_add().
+//                     ^^^^^ reference 0.1.test `sg/cgo`/_Cfunc_add().
    _ = C.answer
+//     ^^^^^^^^ reference 0.1.test `sg/cgo`/_Ciconst_answer.
    _ = C.global
+//     ^^^^^^^^ reference 0.1.test `sg/cgo`/_Cvar_global.
    _ = C.dynamic
+//     ^^^^^^^^^ reference 0.1.test `sg/cgo`/_Cmacro_dynamic().
    _ = C.sizeof_int
+//     ^^^^^^^^^^^^ reference 0.1.test `sg/cgo`/_Ciconst_sizeof_int.
    C := struct{ add func() }{add: func() {}}
 // ^ definition local 3
 //   kind Variable

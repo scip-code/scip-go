@@ -265,6 +265,11 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 		// No need to: ast.Walk(v, n.Name)
 
 		walkDeclList(v, node.Decls)
+
+		// cmd/cgo rewrites C.name selectors, so find them in the file as written.
+		if v.generatedFrom != nil {
+			v.occurrences = append(v.occurrences, v.generatedFrom.cgoReferences(v.pkg, v.globalSymbols)...)
+		}
 		return nil
 	case *ast.Ident:
 		// Short circuit if this is a blank identifier
