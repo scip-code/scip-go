@@ -185,3 +185,46 @@
   }
 //⌃ enclosing_range_end 0.1.test `sg/pr222`/UseDepWriter().
   
+//⌄ enclosing_range_start 0.1.test `sg/pr222`/UseDepGetter().
+  func UseDepGetter(g deplib.Getter[int]) int {
+//     ^^^^^^^^^^^^ definition 0.1.test `sg/pr222`/UseDepGetter().
+//                  kind Function
+//                  display_name UseDepGetter
+//                  signature_documentation
+//                  > func UseDepGetter(g deplib.Getter[int]) int
+//                  ^ definition local 5
+//                    kind Variable
+//                    display_name g
+//                    signature_documentation
+//                    > var g Getter[int]
+//                    ^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/
+//                           ^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/Getter#
+   return g.Get()
+//        ^ reference local 5
+//          ^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/Getter#Get().
+  }
+//⌃ enclosing_range_end 0.1.test `sg/pr222`/UseDepGetter().
+  
+//⌄ enclosing_range_start 0.1.test `sg/pr222`/UseDepWriteCloser().
+  func UseDepWriteCloser(wc deplib.WriteCloser) {
+//     ^^^^^^^^^^^^^^^^^ definition 0.1.test `sg/pr222`/UseDepWriteCloser().
+//                       kind Function
+//                       display_name UseDepWriteCloser
+//                       signature_documentation
+//                       > func UseDepWriteCloser(wc deplib.WriteCloser)
+//                       ^^ definition local 6
+//                          kind Variable
+//                          display_name wc
+//                          signature_documentation
+//                          > var wc WriteCloser
+//                          ^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/
+//                                 ^^^^^^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/WriteCloser#
+   wc.Write(nil)
+// ^^ reference local 6
+//    ^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/Writer#Write().
+   wc.Close()
+// ^^ reference local 6
+//    ^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/WriteCloser#Close().
+  }
+//⌃ enclosing_range_end 0.1.test `sg/pr222`/UseDepWriteCloser().
+  

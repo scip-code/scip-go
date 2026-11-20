@@ -13,6 +13,7 @@ import (
 	"github.com/scip-code/scip-go/internal/index"
 	"github.com/scip-code/scip/bindings/go/scip"
 	"github.com/scip-code/scip/bindings/go/scip/testutil"
+	"golang.org/x/mod/modfile"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -70,6 +71,11 @@ func TestSnapshots(t *testing.T) {
 				}
 			}
 
+			// Index nested modules (such as dependencies wired in with a local
+			// replace directive) on their own, as their published index would be,
+			// so their definitions can be compared with the references above.
+			scipIndex.Documents = append(scipIndex.Documents, indexNestedModules(t, inputDirectory)...)
+
 			// Filter out documents outside of current directory
 			var filteredDocs []*scip.Document
 			for _, doc := range scipIndex.Documents {
@@ -104,6 +110,43 @@ func TestSnapshots(t *testing.T) {
 			return sourceFiles
 		},
 	)
+}
+
+// indexNestedModules indexes every module below root, except the
+// GOPACKAGESDRIVER in driver/, with document paths relative to root.
+func indexNestedModules(t *testing.T, root string) []*scip.Document {
+	t.Helper()
+	var documents []*scip.Document
+	err := filepath.WalkDir(root, func(path string, d os.DirEntry, err error) error {
+		if err != nil || d.Name() != "go.mod" || filepath.Dir(path) == root {
+			return err
+		}
+		dir := filepath.Dir(path)
+		rel, err := filepath.Rel(root, dir)
+		if err != nil || rel == "driver" {
+			return err
+		}
+		contents, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		return index.Index(func(msg proto.Message) error {
+			if doc, ok := msg.(*scip.Document); ok {
+				doc.RelativePath = filepath.Join(rel, doc.RelativePath)
+				documents = append(documents, doc)
+			}
+			return nil
+		}, config.IndexOpts{
+			ModuleRoot:      dir,
+			ModuleVersion:   "0.1.test",
+			ModulePath:      modfile.ModulePath(contents),
+			GoStdlibVersion: "go1.22",
+		})
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	return documents
 }
 
 func assertTypedOccurrenceRanges(t *testing.T, scipIndex *scip.Index) {
