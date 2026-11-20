@@ -131,9 +131,10 @@ func Index(writer func(proto.Message) error, opts config.IndexOpts) error {
 		for _, ID := range pkgIDs {
 			pkg := projectPackages[ID]
 			pkgSymbols := globalSymbols.GetPackage(pkg)
+			sourceMap := visitors.NewSourceMap(pkg)
 
 			for _, file := range pkg.Syntax {
-				doc := pathToDocument[pkg.Fset.File(file.Package).Name()]
+				doc := pathToDocument[sourceMap.Position(file.Package).Filename]
 				if doc == nil {
 					continue
 				}
@@ -148,6 +149,7 @@ func Index(writer func(proto.Message) error, opts config.IndexOpts) error {
 					file,
 					pkgSymbols,
 					globalSymbols,
+					sourceMap,
 				)
 
 				// Traverse the file
