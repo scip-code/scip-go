@@ -24,3 +24,12 @@ type Stringer interface {
 type Writer interface {
 	Write(p []byte) (n int, err error)
 }
+
+type Getter[T any] interface {
+	Get() T
+}
+
+type WriteCloser interface {
+	Writer
+	Close() error
+}

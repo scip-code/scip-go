@@ -7,7 +7,7 @@ eagerly indexed.
 Exercises the major symbol shapes a dependency can expose: generic and
 non-generic struct fields, methods on generic types, package-level consts and
 vars, embedded fields, and interface methods used through a dependency-defined
-interface.
+interface, including generic interfaces and methods of embedded interfaces.
 
 The `deplib/` subdirectory is a separate module wired in via a `replace`
 directive in `go.mod`.

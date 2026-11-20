@@ -40,3 +40,12 @@ type LocalInterface interface {
 func UseDepWriter(w deplib.Writer) {
 	w.Write(nil)
 }
+
+func UseDepGetter(g deplib.Getter[int]) int {
+	return g.Get()
+}
+
+func UseDepWriteCloser(wc deplib.WriteCloser) {
+	wc.Write(nil)
+	wc.Close()
+}

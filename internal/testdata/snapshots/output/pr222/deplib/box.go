@@ -155,3 +155,50 @@
   }
 //⌃ enclosing_range_end github.com/example/deplib 0.1.test `github.com/example/deplib`/Writer#
   
+//⌄ enclosing_range_start github.com/example/deplib 0.1.test `github.com/example/deplib`/Getter#
+  type Getter[T any] interface {
+//     ^^^^^^ definition github.com/example/deplib 0.1.test `github.com/example/deplib`/Getter#
+//            kind Interface
+//            display_name Getter
+//            signature_documentation
+//            > type Getter interface{ Get() T }
+//            ^ definition local 6
+//              kind Interface
+//              display_name T
+//              signature_documentation
+//              > type parameter T any
+// ⌄ enclosing_range_start github.com/example/deplib 0.1.test `github.com/example/deplib`/Getter#Get.
+   Get() T
+// ^^^ definition github.com/example/deplib 0.1.test `github.com/example/deplib`/Getter#Get.
+//     kind MethodSpecification
+//     display_name Get
+//     signature_documentation
+//     > func (Getter[T any]).Get() T
+//       ^ reference local 6
+//       ⌃ enclosing_range_end github.com/example/deplib 0.1.test `github.com/example/deplib`/Getter#Get.
+  }
+//⌃ enclosing_range_end github.com/example/deplib 0.1.test `github.com/example/deplib`/Getter#
+  
+//⌄ enclosing_range_start github.com/example/deplib 0.1.test `github.com/example/deplib`/WriteCloser#
+  type WriteCloser interface {
+//     ^^^^^^^^^^^ definition github.com/example/deplib 0.1.test `github.com/example/deplib`/WriteCloser#
+//                 kind Interface
+//                 display_name WriteCloser
+//                 signature_documentation
+//                 > type WriteCloser interface {
+//                 >     Close() error
+//                 >     Writer
+//                 > }
+   Writer
+// ^^^^^^ reference github.com/example/deplib 0.1.test `github.com/example/deplib`/Writer#
+// ⌄ enclosing_range_start github.com/example/deplib 0.1.test `github.com/example/deplib`/WriteCloser#Close.
+   Close() error
+// ^^^^^ definition github.com/example/deplib 0.1.test `github.com/example/deplib`/WriteCloser#Close.
+//       kind MethodSpecification
+//       display_name Close
+//       signature_documentation
+//       > func (WriteCloser).Close() error
+//             ⌃ enclosing_range_end github.com/example/deplib 0.1.test `github.com/example/deplib`/WriteCloser#Close.
+  }
+//⌃ enclosing_range_end github.com/example/deplib 0.1.test `github.com/example/deplib`/WriteCloser#
+  
