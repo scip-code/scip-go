@@ -20,18 +20,20 @@ func VisitPackageSyntax(
 	pkg *packages.Package,
 	pathToDocuments map[string]*document.Document,
 	globalSymbols *lookup.Global,
+	sourceMap *SourceMap,
 ) {
 	pkgSymbols := lookup.NewPackageSymbols(pkg)
 	// Iterate over all the files, collect any global symbols
 	for _, f := range pkg.Syntax {
-
-		abs := pkg.Fset.File(f.Package).Name()
+		abs := sourceMap.Position(f.Package).Filename
 		relative, _ := filepath.Rel(moduleRoot, abs)
 
 		doc := visitSyntax(pkg, pkgSymbols, f, relative)
 
 		// Save document for pass 2
-		pathToDocuments[abs] = doc
+		if abs != "" {
+			pathToDocuments[abs] = doc
+		}
 	}
 
 	globalSymbols.Add(pkgSymbols)
