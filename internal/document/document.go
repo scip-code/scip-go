@@ -57,7 +57,7 @@ type Document struct {
 	// The occurrence for `package foo` at the top of a Go file.
 	//   It could be a definition or a reference, depending on the package structure.
 	//   It doesn't get traversed in the same way as other parts of the tree,
-	//   so we special case it here. It must get added to the occurences when
+	//   so we special case it here. It must get added to the occurrences when
 	//   creating a visitors.fileVisitor
 	PackageOccurrence *scip.Occurrence
 
