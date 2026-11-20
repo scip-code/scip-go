@@ -21,8 +21,28 @@ import (
 var filter = flag.String("filter", "", "filenames to filter by")
 
 func TestSnapshots(t *testing.T) {
-	snapshotRoot := getTestdataRoot(t)
+	testSnapshots(t, getTestdataRoot(t))
+}
 
+func TestCgoSnapshots(t *testing.T) {
+	// The go command disables cgo by default when it cannot find a C compiler.
+	enabled, err := exec.Command("go", "env", "CGO_ENABLED").Output()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.TrimSpace(string(enabled)) != "1" {
+		t.Skip("cgo is disabled")
+	}
+
+	root, err := filepath.Abs("testdata")
+	if err != nil {
+		t.Fatal(err)
+	}
+	testSnapshots(t, root)
+}
+
+func testSnapshots(t *testing.T, snapshotRoot string) {
+	t.Helper()
 	testutil.SnapshotTest(t,
 		snapshotRoot,
 		func(inputDirectory, outputDirectory string, sources []*scip.SourceFile) []*scip.SourceFile {
@@ -71,6 +91,12 @@ func TestSnapshots(t *testing.T) {
 				}
 			}
 
+			for _, doc := range scipIndex.Documents {
+				if strings.HasPrefix(doc.RelativePath, "..") {
+					t.Errorf("%s: document outside the module: %s", inputDirectory, doc.RelativePath)
+				}
+			}
+
 			// Index nested modules (such as dependencies wired in with a local
 			// replace directive) on their own, as their published index would be,
 			// so their definitions can be compared with the references above.
@@ -86,6 +112,9 @@ func TestSnapshots(t *testing.T) {
 					continue
 				}
 				filteredDocs = append(filteredDocs, doc)
+			}
+			if driverPath != "" && *filter == "" && len(filteredDocs) == 0 {
+				t.Fatalf("%s: package driver produced no source documents", inputDirectory)
 			}
 			scipIndex.Documents = filteredDocs
 			assertTypedOccurrenceRanges(t, &scipIndex)

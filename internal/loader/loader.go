@@ -22,6 +22,8 @@ import (
 type PackageLookup map[newtypes.PackageID]*packages.Package
 
 var loadMode = packages.NeedExportFile |
+	packages.NeedCompiledGoFiles |
+	packages.NeedFiles |
 	packages.NeedImports |
 	packages.NeedSyntax |
 	packages.NeedTypes |
@@ -169,6 +171,12 @@ func normalizePackage(opts *config.IndexOpts, pkg *packages.Package) *packages.P
 
 		if opts.ModuleVersion != "" {
 			pkg.Module.Version = opts.ModuleVersion
+		}
+
+		// If a package driver has no GoFiles at all, use the compiler
+		// input files instead.
+		if len(pkg.GoFiles) == 0 {
+			pkg.GoFiles = pkg.CompiledGoFiles
 		}
 
 		return pkg
