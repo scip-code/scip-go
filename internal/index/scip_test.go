@@ -89,6 +89,7 @@ func TestSnapshots(t *testing.T) {
 			}
 			scipIndex.Documents = filteredDocs
 			assertTypedOccurrenceRanges(t, &scipIndex)
+			assertTestRoles(t, &scipIndex)
 
 			symbolFormatter := scip.SymbolFormatter{
 				OnError:               func(err error) error { return err },
@@ -170,6 +171,21 @@ func assertTypedOccurrenceRanges(t *testing.T, scipIndex *scip.Index) {
 			}
 			if len(occ.GetEnclosingRange()) != 0 {
 				t.Fatalf("%s: occurrence %q set deprecated enclosing_range: %v", doc.RelativePath, occ.GetSymbol(), occ.GetEnclosingRange())
+			}
+		}
+	}
+}
+
+// assertTestRoles checks that an occurrence has the Test role exactly when it
+// is in a _test.go file.
+func assertTestRoles(t *testing.T, scipIndex *scip.Index) {
+	t.Helper()
+	for _, doc := range scipIndex.Documents {
+		isTestFile := strings.HasSuffix(doc.RelativePath, "_test.go")
+		for _, occ := range doc.Occurrences {
+			if scip.SymbolRole_Test.Matches(occ) != isTestFile {
+				t.Fatalf("%s: occurrence %q has symbol_roles %d; want Test role %v",
+					doc.RelativePath, occ.GetSymbol(), occ.GetSymbolRoles(), isTestFile)
 			}
 		}
 	}

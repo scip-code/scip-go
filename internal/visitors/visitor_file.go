@@ -6,6 +6,7 @@ import (
 	"go/token"
 	"go/types"
 	"log/slog"
+	"strings"
 
 	"github.com/scip-code/scip-go/internal/document"
 	"github.com/scip-code/scip-go/internal/lookup"
@@ -389,6 +390,15 @@ func (v *fileVisitor) ToScipDocument() *scip.Document {
 	documentFile := v.pkg.Fset.File(v.file.Pos())
 	if documentFile == nil {
 		panic("that shouldn't happen")
+	}
+
+	// The go command compiles files whose names end in _test.go only when
+	// building tests, so every occurrence in such a file, including its
+	// package clause, is in test code.
+	if strings.HasSuffix(documentFile.Name(), "_test.go") {
+		for _, occ := range v.occurrences {
+			occ.SymbolRoles |= int32(scip.SymbolRole_Test)
+		}
 	}
 
 	documentSymbols := v.pkgSymbols.SymbolsForFile(documentFile)
