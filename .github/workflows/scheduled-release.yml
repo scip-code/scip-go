@@ -1,0 +1,115 @@
+name: scheduled-release
+
+# Opens a patch release PR every 4 weeks, even without code changes, so the
+# Docker image is rebuilt with the latest nixpkgs security fixes. Merging the
+# PR changes internal/index/version.txt on main, which runs release.yml.
+on:
+  # Cron can't express "every 4 weeks", so this runs every Monday and skips
+  # weeks that aren't a multiple of 4 weeks after RELEASE_MONDAY.
+  schedule:
+    - cron: "0 9 * * 1"
+  workflow_dispatch:
+
+env:
+  # The same date as the other SCIP indexers, so they all release in one week.
+  RELEASE_MONDAY: "2026-11-23"
+
+permissions:
+  contents: read
+
+jobs:
+  check-week:
+    runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.check.outputs.release }}
+    steps:
+      - id: check
+        run: |
+          set -euo pipefail
+          # Manual runs always release. Checking the week rather than the day
+          # keeps a delayed run or a rerun later in the release week eligible.
+          if [ "$GITHUB_EVENT_NAME" = "schedule" ]; then
+            DAYS=$(( ($(date -u +%s) - $(date -u -d "$RELEASE_MONDAY" +%s)) / 86400 ))
+            if (( DAYS < 0 || (DAYS / 7) % 4 != 0 )); then
+              echo "Not a release week ($DAYS days after $RELEASE_MONDAY)"
+              exit 0
+            fi
+          fi
+          echo "release=true" >> "$GITHUB_OUTPUT"
+
+  open-release-pr:
+    needs: check-week
+    if: needs.check-week.outputs.release == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # Release from main even when dispatched from another branch.
+          ref: main
+      - uses: DeterminateSystems/nix-installer-action@v23
+        with:
+          summarize: false
+      - uses: DeterminateSystems/magic-nix-cache-action@v15
+
+      - name: Open release PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          CURRENT="$(tr -d '[:space:]' < internal/index/version.txt)"
+          if [[ ! "$CURRENT" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::internal/index/version.txt ($CURRENT) must be MAJOR.MINOR.PATCH"
+            exit 1
+          fi
+          IFS=. read -r MAJOR MINOR PATCH <<<"$CURRENT"
+          VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+          BRANCH="release/v$VERSION"
+
+          # A separate assignment, so a failed lookup stops the job under set -e.
+          OPEN_PR="$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')"
+          if [ -n "$OPEN_PR" ]; then
+            echo "::warning::PR #$OPEN_PR for $BRANCH is already open; merge it, or close it and delete the branch."
+            exit 0
+          fi
+
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            # An earlier run pushed the branch but didn't open the PR, or its PR
+            # was closed. Open a PR for that commit instead of pushing another.
+            echo "::notice::$BRANCH already exists; opening a PR for it. Delete the branch to start over."
+            git fetch --depth=1 origin "$BRANCH"
+            git checkout -b "$BRANCH" FETCH_HEAD
+          else
+            echo "$VERSION" > internal/index/version.txt
+            # The image's packages (Go, git, busybox, CA certificates) come from
+            # the locked nixpkgs, so a rebuild only picks up fixes after this.
+            nix flake update 2> "$RUNNER_TEMP/flake-update.log"
+            cat "$RUNNER_TEMP/flake-update.log"
+            # CI on the PR waits for a maintainer's approval, so fail here
+            # rather than push a release branch that doesn't build.
+            nix flake check
+            nix build .#scip-go .#docker
+
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git checkout -b "$BRANCH"
+            # The commit body keeps only the "• Updated input" lines and their
+            # old → new revisions, so a later run can reuse it for the PR body.
+            git commit -a -m "release $VERSION" \
+              -m "$(grep -E '^(•|  )' "$RUNNER_TEMP/flake-update.log" || echo "No flake input changes.")"
+            git push origin "$BRANCH"
+          fi
+
+          {
+            echo "Scheduled patch release. It also updates the flake inputs, so the Docker image picks up the latest nixpkgs security fixes."
+            echo
+            echo '```'
+            printf '%s\n' "$(git log -1 --format=%b)"
+            echo '```'
+            echo
+            echo "GitHub doesn't start CI for PRs opened by Actions until a maintainer selects **Approve workflows to run** below."
+            echo "Merging this PR tags v$VERSION and publishes the binaries and the ghcr.io/scip-code/scip-go images."
+          } > "$RUNNER_TEMP/body.md"
+          gh pr create --base main --head "$BRANCH" --title "release $VERSION" --body-file "$RUNNER_TEMP/body.md"

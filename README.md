@@ -108,9 +108,15 @@ go test ./internal/index -update-snapshots
 
 ## Cutting releases
 
-1.  Land a PR with updated `internal/index/version.txt`
-2.  From the `main` branch, trigger the [release workflow] via **Actions →
-    release → Run workflow**, entering `M.N.P` as the version.
+Every 4 weeks on Monday, the [scheduled-release workflow] opens a PR that
+bumps the patch version in `internal/index/version.txt` and updates
+`flake.lock`, so the Docker image picks up nixpkgs security fixes even
+without code changes. To open one now, run it via **Actions →
+scheduled-release → Run workflow**. For other releases, land a PR that
+updates `internal/index/version.txt`.
+
+When a version change lands on `main`, the [release workflow] tags it and
+publishes the binaries and Docker images.
 
 # Contributing
 
@@ -118,4 +124,5 @@ Contributors should follow the [Sourcegraph Community Code of Conduct].
 
   [Go Packages Driver Protocol]: https://pkg.go.dev/golang.org/x/tools/go/packages#hdr-The_driver_protocol
   [release workflow]: https://github.com/scip-code/scip-go/actions/workflows/release.yml
+  [scheduled-release workflow]: https://github.com/scip-code/scip-go/actions/workflows/scheduled-release.yml
   [Sourcegraph Community Code of Conduct]: https://handbook.sourcegraph.com/company-info-and-process/community/code_of_conduct/
