@@ -105,7 +105,7 @@ func (v *varVisitor) Visit(n ast.Node) (w ast.Visitor) {
 		// I think the only case of this is embedded fields.
 		if len(node.Names) == 0 {
 
-			names := getIdentOfTypeExpr(v.pkg, node.Type)
+			names := getIdentOfTypeExpr(v.pkg.Fset, node.Type)
 			for _, name := range names {
 				embeddedSymbol := v.makeSymbol(&scip.Descriptor{
 					Name:   name.Name,

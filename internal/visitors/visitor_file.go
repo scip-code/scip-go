@@ -22,6 +22,7 @@ func NewFileVisitor(
 	file *ast.File,
 	pkgSymbols *lookup.Package,
 	globalSymbols *lookup.Global,
+	sourceMap *SourceMap,
 ) *fileVisitor {
 	caseClauses := map[token.Pos]types.Object{}
 	for implicit, obj := range pkg.TypesInfo.Implicits {
@@ -35,6 +36,11 @@ func NewFileVisitor(
 		doc.PackageOccurrence,
 	}
 
+	var generatedFrom *sourceFile
+	if !sourceMap.InGoFiles(file) {
+		generatedFrom = &sourceFile{path: sourceMap.Position(file.Package).Filename}
+	}
+
 	return &fileVisitor{
 		doc:               doc,
 		pkg:               pkg,
@@ -44,7 +50,9 @@ func NewFileVisitor(
 		globalSymbols:     globalSymbols,
 		occurrences:       occurrences,
 		caseClauses:       caseClauses,
-		declarationRanges: collectDeclarationRanges(pkg, file),
+		declarationRanges: collectDeclarationRanges(pkg.Fset, file),
+		sourceMap:         sourceMap,
+		generatedFrom:     generatedFrom,
 	}
 }
 
@@ -78,12 +86,18 @@ type fileVisitor struct {
 	// declarationRanges maps definitions to the full source declaration
 	// enclosing their identifier.
 	declarationRanges map[token.Pos]*scip.Range
+
+	sourceMap *SourceMap
+
+	// generatedFrom is set when file is compiled-only. It is the file in
+	// pkg.GoFiles that file was generated from, as written on disk.
+	generatedFrom *sourceFile
 }
 
 // collectDeclarationRanges is deliberately limited to definitions whose
 // declaration ownership is unambiguous in the Go AST. In particular, function
 // parameters and local variables are not promoted to full-file declarations.
-func collectDeclarationRanges(pkg *packages.Package, file *ast.File) map[token.Pos]*scip.Range {
+func collectDeclarationRanges(fset *token.FileSet, file *ast.File) map[token.Pos]*scip.Range {
 	ranges := make(map[token.Pos]*scip.Range)
 	record := func(name *ast.Ident, declaration ast.Node, doc *ast.CommentGroup) {
 		if name == nil || name.Name == "_" || declaration == nil {
@@ -93,8 +107,7 @@ func collectDeclarationRanges(pkg *packages.Package, file *ast.File) map[token.P
 		if doc != nil && doc.Pos() < start {
 			start = doc.Pos()
 		}
-		rng := scipRange(pkg.Fset.PositionFor(start, false),
-			pkg.Fset.PositionFor(declaration.End(), false), pkg.TypesInfo.Defs[name])
+		rng := scipRange(fset.PositionFor(start, false), fset.PositionFor(declaration.End(), false), nil)
 		ranges[name.Pos()] = &rng
 	}
 	for _, declaration := range file.Decls {
@@ -146,7 +159,7 @@ func collectDeclarationRanges(pkg *packages.Package, file *ast.File) map[token.P
 								record(name, field, field.Doc)
 							}
 						} else {
-							for _, name := range getIdentOfTypeExpr(pkg, field.Type) {
+							for _, name := range getIdentOfTypeExpr(fset, field.Type) {
 								record(name, field, field.Doc)
 							}
 						}
@@ -199,13 +212,15 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 
 		if node.Name != nil && node.Name.Name != "." && node.Name.Name != "_" {
 			if sym, ok := v.globalSymbols.GetPkgSymbol(importedPackage); ok {
-				v.newReference(sym, symbols.RangeFromName(
-					v.pkg.Fset.PositionFor(node.Name.Pos(), false), node.Name.Name, false), false)
+				position := v.sourceMap.Position(node.Name.Pos())
+				if v.hasIdentifier(position, node.Name.Name) {
+					v.newReference(sym, symbols.RangeFromName(position, node.Name.Name, false), false)
+				}
 			}
 		}
 
-		position := v.pkg.Fset.PositionFor(node.Path.Pos(), false)
-		v.emitImportReference(v.globalSymbols, position, importedPackage)
+		position := v.sourceMap.Position(node.Path.Pos())
+		v.emitImportReference(v.globalSymbols, position, importedPackage, node.Path.Value)
 
 		return nil
 
@@ -217,8 +232,8 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 			// compared to almost every other construct in the language.
 			switch sel := use.(type) {
 			case *types.PkgName:
-				startPosition := v.pkg.Fset.PositionFor(ident.Pos(), false)
-				endPosition := v.pkg.Fset.PositionFor(ident.End(), false)
+				startPosition := v.sourceMap.Position(ident.Pos())
+				endPosition := v.sourceMap.Position(ident.End())
 
 				packageID := newtypes.GetFromTypesPackage(sel.Imported())
 				sym, ok := v.globalSymbols.GetPkgSymbolByID(packageID)
@@ -228,8 +243,10 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 					return nil
 				}
 
-				symRange := scipRange(startPosition, endPosition, sel)
-				v.newReference(sym, symRange, false)
+				if v.hasIdentifier(startPosition, ident.Name) {
+					symRange := scipRange(startPosition, endPosition, sel)
+					v.newReference(sym, symRange, false)
+				}
 
 				// Then walk the selection
 				ast.Walk(v, node.Sel)
@@ -249,6 +266,11 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 		// No need to: ast.Walk(v, n.Name)
 
 		walkDeclList(v, node.Decls)
+
+		// cmd/cgo rewrites C.name selectors, so find them in the file as written.
+		if v.generatedFrom != nil {
+			v.occurrences = append(v.occurrences, v.generatedFrom.cgoReferences(v.pkg, v.globalSymbols)...)
+		}
 		return nil
 	case *ast.Ident:
 		// Short circuit if this is a blank identifier
@@ -256,8 +278,11 @@ func (v *fileVisitor) Visit(n ast.Node) ast.Visitor {
 			return nil
 		}
 
-		startPosition := v.pkg.Fset.PositionFor(node.Pos(), false)
-		endPosition := v.pkg.Fset.PositionFor(node.End(), false)
+		startPosition := v.sourceMap.Position(node.Pos())
+		endPosition := v.sourceMap.Position(node.End())
+		if !v.hasIdentifier(startPosition, node.Name) {
+			return nil
+		}
 
 		// Short circuit on case clauses
 		if obj, ok := v.caseClauses[node.Pos()]; ok {
@@ -343,6 +368,7 @@ func (v *fileVisitor) emitImportReference(
 	globalSymbols *lookup.Global,
 	position token.Position,
 	importedPackage *packages.Package,
+	literal string,
 ) {
 	sym, ok := globalSymbols.GetPkgSymbol(importedPackage)
 	if !ok {
@@ -350,6 +376,11 @@ func (v *fileVisitor) emitImportReference(
 		return
 	}
 
+	// cmd/cgo replaces `import "C"` with `import _ "unsafe"` at the same
+	// position, so check that the import is really written there.
+	if v.generatedFrom != nil && !v.generatedFrom.hasImport(position, literal) {
+		return
+	}
 	v.newReference(sym, symbols.RangeFromName(position, importedPackage.PkgPath, true), false)
 }
 
@@ -436,6 +467,9 @@ func (v *fileVisitor) ToScipDocument() *scip.Document {
 }
 
 func (v *fileVisitor) enclosingRange(n *ast.Ident) *scip.Range {
+	if v.generatedFrom != nil {
+		return v.generatedFrom.enclosingRange(v.sourceMap.Position(n.Pos()))
+	}
 	return v.declarationRanges[n.Pos()]
 }
 
@@ -457,4 +491,11 @@ func (v *fileVisitor) isDeprecated(pos token.Pos) bool {
 		return document.IsDocDeprecated(info.Documentation)
 	}
 	return false
+}
+
+// hasIdentifier reports whether name is written at position. It only fails
+// for compiled-only files, whose generated code may map to unrelated text in
+// pkg.GoFiles, or nowhere at all.
+func (v *fileVisitor) hasIdentifier(position token.Position, name string) bool {
+	return v.generatedFrom == nil || v.generatedFrom.hasIdentifier(position, name)
 }

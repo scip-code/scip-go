@@ -65,13 +65,15 @@ func ListMissing(opts config.IndexOpts) (missing []string, err error) {
 
 	pathToDocuments := map[string]*document.Document{}
 	for _, pkg := range projectPackages {
+		sourceMap := visitors.NewSourceMap(pkg)
 		visitors.VisitPackageSyntax(
-			opts.ModuleRoot, pkg, pathToDocuments, globalSymbols)
-	}
+			opts.ModuleRoot, pkg, pathToDocuments, globalSymbols, sourceMap)
 
-	for _, pkg := range projectPackages {
 		for _, f := range pkg.Syntax {
-			docName := pkg.Fset.File(f.Package).Name()
+			docName := sourceMap.Position(f.Package).Filename
+			if docName == "" {
+				continue // generated code with no file in pkg.GoFiles
+			}
 			if _, ok := pathToDocuments[docName]; !ok {
 				missing = append(missing, docName)
 			}
@@ -129,9 +131,10 @@ func Index(writer func(proto.Message) error, opts config.IndexOpts) error {
 		for _, ID := range pkgIDs {
 			pkg := projectPackages[ID]
 			pkgSymbols := globalSymbols.GetPackage(pkg)
+			sourceMap := visitors.NewSourceMap(pkg)
 
 			for _, file := range pkg.Syntax {
-				doc := pathToDocument[pkg.Fset.File(file.Package).Name()]
+				doc := pathToDocument[sourceMap.Position(file.Package).Filename]
 				if doc == nil {
 					continue
 				}
@@ -146,6 +149,7 @@ func Index(writer func(proto.Message) error, opts config.IndexOpts) error {
 					file,
 					pkgSymbols,
 					globalSymbols,
+					sourceMap,
 				)
 
 				// Traverse the file
@@ -204,7 +208,8 @@ func indexVisitPackages(
 		for _, pkgID := range lookupIDs {
 			pkg := projectPackages[pkgID]
 			slog.Debug("Visiting package", "path", pkg.PkgPath)
-			visitors.VisitPackageSyntax(opts.ModuleRoot, pkg, pathToDocuments, globalSymbols)
+			sourceMap := visitors.NewSourceMap(pkg)
+			visitors.VisitPackageSyntax(opts.ModuleRoot, pkg, pathToDocuments, globalSymbols, sourceMap)
 
 			// A package may have no parsed source files (e.g. a directory
 			// that only contains *_test.go files belonging to an external
@@ -227,13 +232,19 @@ func indexVisitPackages(
 					Text:     "package " + pkg.Name,
 				},
 			}
-			firstFile := pkg.Syntax[0]
-			firstDoc := pathToDocuments[pkg.Fset.File(firstFile.Package).Name()]
-			firstDoc.SetSymbolInformation(firstFile.Name.NamePos, symInfo)
+			var firstDoc *document.Document
 
 			for _, f := range pkg.Syntax {
-				doc := pathToDocuments[pkg.Fset.File(f.Package).Name()]
-				position := pkg.Fset.PositionFor(f.Name.NamePos, false)
+				position := sourceMap.Position(f.Name.NamePos)
+				doc := pathToDocuments[position.Filename]
+				if doc == nil || position.Column == 0 {
+					continue
+				}
+
+				if firstDoc == nil {
+					firstDoc = doc
+					firstDoc.SetSymbolInformation(f.Name.NamePos, symInfo)
+				}
 
 				doc.PackageOccurrence = &scip.Occurrence{
 					TypedRange:  symbols.RangeFromName(position, f.Name.Name, false).AsTypedRange(),

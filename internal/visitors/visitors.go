@@ -20,18 +20,20 @@ func VisitPackageSyntax(
 	pkg *packages.Package,
 	pathToDocuments map[string]*document.Document,
 	globalSymbols *lookup.Global,
+	sourceMap *SourceMap,
 ) {
 	pkgSymbols := lookup.NewPackageSymbols(pkg)
 	// Iterate over all the files, collect any global symbols
 	for _, f := range pkg.Syntax {
-
-		abs := pkg.Fset.File(f.Package).Name()
+		abs := sourceMap.Position(f.Package).Filename
 		relative, _ := filepath.Rel(moduleRoot, abs)
 
 		doc := visitSyntax(pkg, pkgSymbols, f, relative)
 
 		// Save document for pass 2
-		pathToDocuments[abs] = doc
+		if abs != "" {
+			pathToDocuments[abs] = doc
+		}
 	}
 
 	globalSymbols.Add(pkgSymbols)
@@ -111,16 +113,16 @@ func scipRange(start, end token.Position, obj types.Object) scip.Range {
 	}
 }
 
-func getIdentOfTypeExpr(pkg *packages.Package, ty ast.Expr) []*ast.Ident {
+func getIdentOfTypeExpr(fset *token.FileSet, ty ast.Expr) []*ast.Ident {
 	switch ty := ty.(type) {
 	case *ast.Ident:
 		return []*ast.Ident{ty}
 	case *ast.SelectorExpr:
 		return []*ast.Ident{ty.Sel}
 	case *ast.StarExpr:
-		return getIdentOfTypeExpr(pkg, ty.X)
+		return getIdentOfTypeExpr(fset, ty.X)
 	case *ast.IndexExpr:
-		return getIdentOfTypeExpr(pkg, ty.X)
+		return getIdentOfTypeExpr(fset, ty.X)
 	case *ast.BinaryExpr:
 		// As far as I can tell, binary exprs are ONLY for type constraints
 		// and those don't really define anything on the struct.
@@ -130,10 +132,10 @@ func getIdentOfTypeExpr(pkg *packages.Package, ty ast.Expr) []*ast.Ident {
 		// return append(s.getIdentOfTypeExpr(ty.X), s.getIdentOfTypeExpr(ty.Y)...)
 		return []*ast.Ident{}
 	case *ast.UnaryExpr:
-		return getIdentOfTypeExpr(pkg, ty.X)
+		return getIdentOfTypeExpr(fset, ty.X)
 
 	case *ast.IndexListExpr:
-		return getIdentOfTypeExpr(pkg, ty.X)
+		return getIdentOfTypeExpr(fset, ty.X)
 
 	// TODO: Should see if any of these need better ident finders
 	case *ast.InterfaceType:
@@ -150,7 +152,7 @@ func getIdentOfTypeExpr(pkg *packages.Package, ty ast.Expr) []*ast.Ident {
 		return nil
 
 	default:
-		slog.Debug(fmt.Sprintf("Unhandled named struct field: %T %+v\n%s", ty, ty, pkg.Fset.Position(ty.Pos())))
+		slog.Debug(fmt.Sprintf("Unhandled named struct field: %T %+v\n%s", ty, ty, fset.Position(ty.Pos())))
 		return nil
 	}
 }
