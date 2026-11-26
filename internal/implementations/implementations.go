@@ -26,6 +26,41 @@ type ImplDef struct {
 	MethodCount   int
 	HasUnexported bool   // true if any method is unexported
 	PkgPath       string // package path, used to skip cross-package checks for unexported methods
+
+	// Sigs holds each method's Id + signature fingerprint; Tricky is set when any fingerprint
+	// involves type parameters (then only types.Implements decides).
+	Sigs   map[string]bool
+	Tricky bool
+}
+
+// methodSigs returns the Id+fingerprint set of a method set, the identity gopls's methodsets
+// index matches on across separately type-checked packages.
+func methodSigs(methods []*types.Selection) (map[string]bool, bool) {
+	sigs, tricky := make(map[string]bool, len(methods)), false
+	for _, m := range methods {
+		fn := m.Obj().(*types.Func)
+		fp, tr := fingerprint.Encode(fn.Signature())
+		tricky = tricky || tr
+		sigs[fn.Id()+"\x00"+fp] = true
+	}
+	return sigs, tricky
+}
+
+// implementsBySignature reports whether every method of iface appears in ty with the same
+// fingerprint. It answers when the two sides come from different type-checking universes:
+// a package and its white-box test variant ("p [p.test]") share a symbol but not a
+// *types.Named, so types.Implements fails for an implementer in another package whose
+// signatures name a type of the interface's own package.
+func implementsBySignature(ty, iface ImplDef) bool {
+	if ty.Tricky || iface.Tricky {
+		return false
+	}
+	for sig := range iface.Sigs {
+		if !ty.Sigs[sig] {
+			return false
+		}
+	}
+	return true
 }
 
 // methodMask computes a 64-bit bitmask from a set of methods, using
@@ -89,7 +124,8 @@ func findImplementations(concreteTypes map[string]ImplDef, interfaces map[string
 			// Use types.Implements to correctly check interface satisfaction,
 			// handling all edge cases (embedded types, generics, unexported methods).
 			if !types.Implements(ty.Named, ifaceType) &&
-				!types.Implements(types.NewPointer(ty.Named), ifaceType) {
+				!types.Implements(types.NewPointer(ty.Named), ifaceType) &&
+				!implementsBySignature(ty, iface) {
 				continue
 			}
 
